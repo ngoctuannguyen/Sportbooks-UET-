@@ -1,0 +1,53 @@
+---------------------------------QUẢN LÝ SẢN PHẨM
+
+Lấy danh sách tất cả sản phẩm.
+Lấy thông tin chi tiết về một sản phẩm cụ thể.
+Tìm kiếm sản phẩm theo tên, danh mục, giá cả, v.v.
+Lọc sản phẩm theo thương hiệu, màu sắc, kích thước, v.v.
+Thêm sản phẩm mới.
+Cập nhật thông tin sản phẩm.
+Xóa sản phẩm.
+Xem danh sách sản phẩm theo danh mục
+Lọc sản phẩm theo thương hiệu và giá cả
+Thống kê sản phẩm tồn kho
+---------------------------------QUẢN LÝ ĐƠN HÀNG
+
+Lấy danh sách tất cả đơn hàng.
+Lấy thông tin chi tiết về một đơn hàng cụ thể.
+Tìm kiếm đơn hàng theo mã đơn hàng, khách hàng, ngày đặt hàng, v.v.
+Lọc đơn hàng theo trạng thái (đang chờ xử lý, đã thanh toán, đã giao hàng, v.v.).
+Thêm đơn hàng mới.
+Cập nhật trạng thái đơn hàng.
+Hủy đơn hàng.
+---------------------------------QUẢN LÝ KHÁCH KHÀNG
+
+Lấy danh sách tất cả khách hàng.
+Lấy thông tin chi tiết về một khách hàng cụ thể.
+Tìm kiếm khách hàng theo tên, email, số điện thoại, v.v.
+Thêm khách hàng mới.
+Cập nhật thông tin khách hàng.
+Xóa khách hàng.
+Tính tổng doanh thu theo khách hàng
+Xem đơn hàng theo trạng thái
+
+---------------------------------QUẢN LÝ SỰ KIỆN
+
+Lấy danh sách tất cả sự kiện.
+Lấy thông tin chi tiết về một sự kiện cụ thể.
+Tìm kiếm sự kiện theo tên, ngày diễn ra, địa điểm, v.v.
+Lọc sự kiện theo loại sự kiện, giá vé, v.v.
+Thêm sự kiện mới.
+Cập nhật thông tin sự kiện.
+Xóa sự kiện.
+---------------------------------QUẢN LÝ VÉ
+
+Lấy danh sách tất cả vé cho một sự kiện cụ thể.
+Lấy thông tin chi tiết về một vé cụ thể.
+Kiểm tra tính khả dụng của vé cho một sự kiện cụ thể.
+Đặt vé cho một sự kiện.
+Hủy vé cho một sự kiện.
+
+
+Tìm kiếm sản phẩm bán chạy nhất.
+Phân tích doanh thu bán hàng theo thời gian.
+Gửi email thông báo cho khách hàng về các sản phẩm mới hoặc sự kiện sắp diễn ra.
