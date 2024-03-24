@@ -43,6 +43,7 @@ CREATE TABLE orders (
     quantity INT,
     orderDate DATE,
     shippingAddress TEXT,
+    status VARCHAR(50) DEFAULT 'Đang chờ xử lý',
     FOREIGN KEY (customerId) REFERENCES customers(customerId),
     FOREIGN KEY (productId) REFERENCES products(productId)
 );
