@@ -9,6 +9,8 @@ END$$
 DELIMITER;
 ;
 
+-- Này không cần thiết lắm đâu -)))
+
 /*2. Lấy thông tin về 1 sk cụ thể*/
 DELIMITER $$
 CREATE PROCEDURE getTripById( IN id INT)
