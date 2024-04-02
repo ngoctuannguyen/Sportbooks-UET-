@@ -1,7 +1,7 @@
 -- Lấy danh sách tất cả đơn hàng.
 SELECT * FROM orders;
 -- Lấy thông tin chi tiết về một đơn hàng cụ thể.
-SELECT * FROM orders WHERE orderId = 1;
+SELECT * FROM orders WHERE orderId = 1; -- Procedure
 -- Tìm kiếm đơn hàng theo mã đơn hàng, khách hàng, ngày đặt hàng, v.v.
 SELECT * FROM orders WHERE orderId = 1;
 SELECT * FROM orders WHERE customerId = 1;
