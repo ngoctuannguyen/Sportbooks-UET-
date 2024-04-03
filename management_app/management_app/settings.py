@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# HOST IPS
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Application definition
 
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -79,9 +84,32 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     },
     'mysql': {
-        'ENGINE',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'my_project',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': 3306
     }
 }
+
+# Cache
+# https://docs.djangoproject.com/en/5.0/topics/cache/
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        }
+    }
+    # "default": {
+    #     "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+    #     "LOCATION": "my_cache_table",
+    # }
+}
+
 
 
 # Password validation
