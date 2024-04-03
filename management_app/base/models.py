@@ -19,6 +19,7 @@ class Categories(models.Model):
 
 # Products table
     
+    
 # Customers table
 class Customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
