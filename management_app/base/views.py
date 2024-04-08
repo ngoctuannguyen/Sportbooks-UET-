@@ -20,6 +20,6 @@ def apiOverview(request):
 
 @api_view(['GET'])
 def view_books(request):
-    products = Product.objects.all()
+    products = Product1.objects.all()
     results = [product.to_json() for product in products]
     return Response(results, status=status.HTTP_201_CREATED)
