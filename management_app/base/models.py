@@ -1,5 +1,5 @@
 from django.db import models
-# from django_redis import get_redis_connection
+from django_redis import get_redis_connection
 from django.core.cache import cache
 
 # Create your models here.
@@ -28,65 +28,65 @@ class Product1(models.Model):
             'date_modified': self.date_modified,
         }
     
-# Categories table
-class Categories(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200, null=False, blank=False)
-    ### How about indexing
+# # Categories table
+# class Categories(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     name = models.CharField(max_length=200, null=False, blank=False)
+#     ### How about indexing
 
-# Products table
+# # Products table
     
     
-# Customers table
-class Customer(models.Model):
-    customer_id = models.AutoField(primary_key=True)
-    customer_name = models.CharField(max_length=60, null=False)
-    customer_email = models.CharField(max_length=50)
-    customer_address = models.TextField()
-    cumstomer_phonenumber = models.CharField(max_length=15)
+# # Customers table
+# class Customer(models.Model):
+#     customer_id = models.AutoField(primary_key=True)
+#     customer_name = models.CharField(max_length=60, null=False)
+#     customer_email = models.CharField(max_length=50)
+#     customer_address = models.TextField()
+#     cumstomer_phonenumber = models.CharField(max_length=15)
 
-# Order table
-# class Order(models.Model):
+# # Order table
+# # class Order(models.Model):
 
-# # Review
-# class Reviews(models.Model):
+# # # Review
+# # class Reviews(models.Model):
 
-# # History
-# class History(models.Model):
+# # # History
+# # class History(models.Model):
     
-# # Tickets
-# class Tickets(models.Model):
+# # # Tickets
+# # class Tickets(models.Model):
 
-# # Trips
-# class Trips(models.Model):
+# # # Trips
+# # class Trips(models.Model):
 
 
-# # cart
-# class Cart(models.Model):
+# # # cart
+# # class Cart(models.Model):
 
-# # payments
-class payments(models.Model):
-    payment_id = models.AutoField(primary_key=True)
-    order_id = models.IntegerField()
-    payment_date = models.DateTimeField()
-    amount = models.DecimalField(decimal_places=2)
-    payment_method = models.CharField(max_length=50)
-    order = models.ForeignKey("Order", verbose_name=(""), on_delete=models.CASCADE)
+# # # payments
+# class payments(models.Model):
+#     payment_id = models.AutoField(primary_key=True)
+#     order_id = models.IntegerField()
+#     payment_date = models.DateTimeField()
+#     amount = models.DecimalField(decimal_places=2)
+#     payment_method = models.CharField(max_length=50)
+#     order = models.ForeignKey("Order", verbose_name=(""), on_delete=models.CASCADE)
 
 # Redis
 
-# class ExampleModel(models.Model):
-#     name = models.CharField(max_length=100)
-#     redis_connection = get_redis_connection()
-#     def save(self, *args, **kwargs):
-#         self.redis_connection.set(self.name, self.name)
-#         super().save(*args, **kwargs)
-#     def retrieve_data(self):
-#         return self.redis_connection.get(self.name)
+class ExampleModel(models.Model):
+    name = models.CharField(max_length=100)
+    redis_connection = get_redis_connection()
+    def save(self, *args, **kwargs):
+        self.redis_connection.set(self.name, self.name)
+        super().save(*args, **kwargs)
+    def retrieve_data(self):
+        return self.redis_connection.get(self.name)
 
-# def get_data():
-#     data = cache.get('my_data')
-#     if data is None:
-#         # data = retrieve_data()    
-#         cache.set('my_data', data, timeout=3600)
-#     return data
+def get_data():
+    data = cache.get('my_data')
+    if data is None:
+        # data = retrieve_data()    
+        cache.set('my_data', data, timeout=3600)
+    return data
