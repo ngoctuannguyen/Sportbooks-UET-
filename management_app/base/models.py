@@ -3,6 +3,7 @@ from django_redis import get_redis_connection
 from django.core.cache import cache
 
 # Create your models here.
+# Connect to MongoDB
 class Product1(models.Model):
     # name = models.CharField(max_length=200, null=False, blank=False)
     # category = models.CharField(max_length=100, null=False, blank=False)
@@ -29,9 +30,13 @@ class Product1(models.Model):
         }
     
 # # Categories table
-# class Categories(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     name = models.CharField(max_length=200, null=False, blank=False)
+class Categories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
 #     ### How about indexing
 
 # # Products table
@@ -48,7 +53,7 @@ class Product1(models.Model):
 # # Order table
 # # class Order(models.Model):
 
-# # # Review
+# # # Review MongoDB
 # # class Reviews(models.Model):
 
 # # # History
@@ -75,18 +80,18 @@ class Product1(models.Model):
 
 # Redis
 
-class ExampleModel(models.Model):
-    name = models.CharField(max_length=100)
-    redis_connection = get_redis_connection()
-    def save(self, *args, **kwargs):
-        self.redis_connection.set(self.name, self.name)
-        super().save(*args, **kwargs)
-    def retrieve_data(self):
-        return self.redis_connection.get(self.name)
+# class ExampleModel(models.Model):
+#     name = models.CharField(max_length=100)
+#     redis_connection = get_redis_connection()
+#     def save(self, *args, **kwargs):
+#         self.redis_connection.set(self.name, self.name)
+#         super().save(*args, **kwargs)
+#     def retrieve_data(self):
+#         return self.redis_connection.get(self.name)
 
-def get_data():
-    data = cache.get('my_data')
-    if data is None:
-        # data = retrieve_data()    
-        cache.set('my_data', data, timeout=3600)
-    return data
+# def get_data():
+#     data = cache.get('my_data')
+#     if data is None:
+#         # data = retrieve_data()    
+#         cache.set('my_data', data, timeout=3600)
+#     return data
