@@ -8,7 +8,6 @@ Thêm sản phẩm mới.
 Cập nhật thông tin sản phẩm.
 Xóa sản phẩm.
 Xem danh sách sản phẩm theo danh mục
-Lọc sản phẩm theo thương hiệu và giá cả
 Thống kê sản phẩm tồn kho
 --- Backup đoạn này, restore một cái cho admin quyền r & w.
 

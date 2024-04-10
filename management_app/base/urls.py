@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path(
         'cache',
-        views.view_cache_books,
+        views.view_cached_books,
         name='NTN'
     )
 ]

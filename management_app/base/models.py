@@ -1,20 +1,19 @@
 from django.db import models
 from django_redis import get_redis_connection
 from django.core.cache import cache
+from receivers import *
 
 # Create your models here.
 # Connect to MongoDB
 class Product1(models.Model):
-    # name = models.CharField(max_length=200, null=False, blank=False)
-    # category = models.CharField(max_length=100, null=False, blank=False)
-    # price = models.DecimalField(max_digits=4, decimal_places=2)
-    # description = models.TextField()
-    # stars = models.IntegerField()
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=200, null=False, blank=False)
+    category = models.CharField(max_length=100, null=False, blank=False)
+    price = models.DecimalField(max_digits=4, decimal_places=2)
+    stars = models.IntegerField()
     description = models.TextField(null=True, blank=True)
-    price = models.IntegerField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
+    product_count = models.IntegerField()
 
     def __str__(self):
         return self.name
@@ -27,6 +26,7 @@ class Product1(models.Model):
             'price': self.price,
             'date_created': self.date_created,
             'date_modified': self.date_modified,
+            'product_count': self.product_count
         }
     
 # # Categories table
@@ -36,6 +36,11 @@ class Categories(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta: 
+        indexes = [
+            models.Index(fields=['name'])
+        ]
 
 #     ### How about indexing
 
@@ -43,21 +48,22 @@ class Categories(models.Model):
     
     
 # # Customers table
-# class Customer(models.Model):
-#     customer_id = models.AutoField(primary_key=True)
-#     customer_name = models.CharField(max_length=60, null=False)
-#     customer_email = models.CharField(max_length=50)
-#     customer_address = models.TextField()
-#     cumstomer_phonenumber = models.CharField(max_length=15)
+class Customer(models.Model):
+    customer_id = models.AutoField(primary_key=True)
+    customer_name = models.CharField(max_length=60, null=False)
+    customer_email = models.CharField(max_length=50)
+    customer_address = models.TextField()
+    cumstomer_phonenumber = models.CharField(max_length=15)
 
 # # Order table
-# # class Order(models.Model):
+# class Order(models.Model):
 
 # # # Review MongoDB
 # # class Reviews(models.Model):
 
 # # # History
 # # class History(models.Model):
+        # filter
     
 # # # Tickets
 # # class Tickets(models.Model):
@@ -69,14 +75,17 @@ class Categories(models.Model):
 # # # cart
 # # class Cart(models.Model):
 
-# # # payments
-# class payments(models.Model):
-#     payment_id = models.AutoField(primary_key=True)
-#     order_id = models.IntegerField()
-#     payment_date = models.DateTimeField()
-#     amount = models.DecimalField(decimal_places=2)
-#     payment_method = models.CharField(max_length=50)
-#     order = models.ForeignKey("Order", verbose_name=(""), on_delete=models.CASCADE)
+# # payments
+class payments(models.Model):
+    payment_id = models.AutoField(primary_key=True)
+    order_id = models.IntegerField()
+    payment_date = models.DateTimeField()
+    amount = models.DecimalField(decimal_places=2)
+    payment_method = models.CharField(max_length=50)
+    order = models.ForeignKey("Order", verbose_name=(""), on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.payment_method
 
 # Redis
 
