@@ -66,7 +66,7 @@ def view_insert_product(request,
     product.save()
     return Response(product.to_json, status=status.HTTP_201_CREATED)
 
-@api_view('POST')
+@api_view(['POST'])
 def view_delete_product(request, name):
     product = Product1.objects.get(name=name)
     product.delete()

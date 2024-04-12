@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    
     path(
         '', 
         views.apiOverview,
@@ -9,7 +10,7 @@ urlpatterns = [
     ),
     path(
         'books',
-        views.view_products,
+        views.view_books,
         name='home'
     ),
     path(

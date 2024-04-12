@@ -1,13 +1,14 @@
 from django.db import models
 from django_redis import get_redis_connection
 from django.core.cache import cache
-from receivers import *
+#from receiver import *
 
 # Create your models here.
 # Connect to MongoDB
 class Product1(models.Model):
+    product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, null=False, blank=False)
-    category = models.CharField(max_length=100, null=False, blank=False)
+    category = models.CharField(max_length=100, null=False, blank=False,default='Shoes')
     price = models.DecimalField(max_digits=4, decimal_places=2)
     stars = models.IntegerField()
     description = models.TextField(null=True, blank=True)
@@ -80,15 +81,21 @@ class payments(models.Model):
     payment_id = models.AutoField(primary_key=True)
     order_id = models.IntegerField()
     payment_date = models.DateTimeField()
-    amount = models.DecimalField(decimal_places=2)
+    amount = models.DecimalField(decimal_places=2,max_digits=6)
     payment_method = models.CharField(max_length=50)
-    order = models.ForeignKey("Order", verbose_name=(""), on_delete=models.CASCADE)
+    order_id = models.ForeignKey("Order",  on_delete=models.CASCADE, db_column='order_id')
 
     def __str__(self):
         return self.payment_method
 
 # Redis
-
+class Order(models.Model):
+    order_id = models.IntegerField(primary_key=True)
+    customer_id = models.ForeignKey('Customer',on_delete=models.CASCADE,db_column='customer_id')
+    product_id = models.ForeignKey('Product1',on_delete=models.CASCADE,db_column='product_id')
+    quantity = models.IntegerField()
+    price = models.IntegerField()
+    orderDate = models.DateTimeField()
 # class ExampleModel(models.Model):
 #     name = models.CharField(max_length=100)
 #     redis_connection = get_redis_connection()
