@@ -9,7 +9,7 @@ urlpatterns = [
     ),
     path(
         'books',
-        views.view_books,
+        views.view_products,
         name='home'
     ),
     path(
