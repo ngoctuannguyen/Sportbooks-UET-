@@ -1,0 +1,5 @@
+pip install "celery[redis]"
+pip install django-debug-toolbar==3.6.0
+pip install redis==4.3.4
+
+
