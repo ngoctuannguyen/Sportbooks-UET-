@@ -1,21 +1,27 @@
 from django.urls import path
 from . import views
+from . import redis
 
 urlpatterns = [
     
     path(
         '', 
-        views.apiOverview,
-        name='apiOverview'
+        views.view_product_detail,
+        name='view_product_detail'
     ),
     path(
         'books',
-        views.view_books,
+        views.view_products,
         name='home'
     ),
     path(
         'cache',
-        views.view_cached_books,
-        name='NTN'
-    )
+        redis.cached,
+        name='cached'
+    ),
+    path(
+        'cacheless',
+        redis.cacheless,
+        name='cacheless'
+    ),
 ]
