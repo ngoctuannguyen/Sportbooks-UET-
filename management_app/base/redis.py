@@ -1,4 +1,7 @@
-from django_redis import get_redis_connection
+from datetime import time
+import math
+import uuid
+# from django_redis import get_redis_connection
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -11,6 +14,7 @@ from rest_framework.response import Response
 from django.core.cache import cache
 from . models import Product1
 from rest_framework import status
+# from .models import UserProfile
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -29,12 +33,20 @@ def view_cached_books(request):
         print('F')
         return Response(results, status=status.HTTP_201_CREATED)
 
+# def create_user(request):
+#     user = get_user_model().objects.create(
+#         username=request.POST['username'], password=request.POST['password']
+#     )
+#     profile = UserProfile.objects.create(user=user, bio=request.POST['bio'], website=request.POST['website'])
+#     profile.save()
+#     return user
+
 # @api_view(['GET'])
 @cache_page(60 * 15)
 def cached(request):
     user_model = get_user_model()
     all_users = user_model.objects.all()
-    return Response(cache.keys('*'))
+    return Response(cache)
 
 @api_view(['GET'])
 def cacheless(request):

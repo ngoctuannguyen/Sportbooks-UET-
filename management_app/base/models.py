@@ -1,9 +1,15 @@
+from django.conf import settings
 from django.db import models
-from django_redis import get_redis_connection
+# from django_redis import get_redis_connection
 from django.core.cache import cache
 #from receiver import *
 
 # Create your models here.
+
+# class UserModel(models.Models):
+#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+#     bio = models.TextField(blank=True)
+
 # Connect to MongoDB
 class Product1(models.Model):
     product_id = models.AutoField(primary_key=True)

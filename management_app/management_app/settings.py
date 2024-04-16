@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'base.apps.BaseConfig',
-    'debug_toolbar'
+    'debug_toolbar',
+    'axes',
 ]
 
 SITE_ID = 1
@@ -57,8 +58,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'axes.middleware.FailedLoginMiddleware',
+    'axes.middleware.AxesMiddleware'
+
 ]
+
+# AUTHENTICATION_BACKENDS = [
+#     'axes.backends.AxesBackend',
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
 
 ROOT_URLCONF = 'management_app.urls'
 
@@ -99,7 +108,7 @@ DATABASES = {
     }
 }
 
-# Cache
+# 
 # https://docs.djangoproject.com/en/5.0/topics/cache/
 
 # CELERY_BROKER_URL = 'redis://127.0.0.1:6379'

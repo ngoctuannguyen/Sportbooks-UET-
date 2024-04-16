@@ -4,5 +4,8 @@ redis==5.0.3
 djangorestframework
 Django
 django-lockout
-
+django-defender
+django-redis=3.1.6
+mysqlclient
+django-axes
 
