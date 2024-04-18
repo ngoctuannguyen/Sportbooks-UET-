@@ -24,4 +24,13 @@ urlpatterns = [
         redis.cacheless,
         name='cacheless'
     ),
+    path('cart', 
+         views.cart_list,
+         name= 'cart'),
+    path('users',
+          views.user_list,
+          name= 'users'),
+    path('users/<int:pk>/',
+          views.user_detail),
+    
 ]
