@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import User
+
 # from django_redis import get_redis_connection
 from django.core.cache import cache
 #from receiver import *
@@ -9,6 +11,22 @@ from django.core.cache import cache
 # class UserModel(models.Models):
 #     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 #     bio = models.TextField(blank=True)
+class User(models.Model):
+    username = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=100)
+    
+    #thông tin cá nhân
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    date_of_birth = models.DateField(null=True, blank=True) # Cho phép null và blank
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+
+     #thông tin đăng nhập
+    last_login = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.username
 
 # Connect to MongoDB
 class Product1(models.Model):
@@ -81,6 +99,15 @@ class Customer(models.Model):
 
 # # # cart
 # # class Cart(models.Model):
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product_id = models.IntegerField()
+    quantity = models.IntegerField()
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Cart'
+        verbose_name_plural = 'Carts'
 
 # # payments
 class payments(models.Model):

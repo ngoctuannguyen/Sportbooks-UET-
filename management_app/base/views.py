@@ -5,9 +5,11 @@ from rest_framework import status
 from django.core.cache import cache
 
 from email import *
-from django.db import connection  
+from django.db import connection
 
-from . models import Product1
+from .serializers import CartSerializer,UserSerializer
+
+from . models import Cart, Product1, User
 
 connect_sql = connection.cursor()
 
@@ -74,4 +76,54 @@ def view_remaining_product(request):
                                    where count > 0')
     return Response(product.to_json(), status=status.HTTP_202_ACCEPTED)
 
+#giỏ hàng.
+@api_view(['GET', 'POST'])
+def cart_list(request):
+    if request.method == 'GET':
+        carts = Cart.objects.all()
+        serializer = CartSerializer(carts, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = CartSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+#user
+@api_view(['GET', 'POST'])
+def user_list(request):
+    if request.method == 'GET': # lấy danh sách tất cả người dùng
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST': #Tạo người dùng mới
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def user_detail(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET': # Lấy thông tin 1 người dùng 
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT': # Cập nhập
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE': #xóa 
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
