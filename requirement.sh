@@ -8,4 +8,5 @@ django-defender
 django-redis==5.4.0
 mysqlclient
 django-axes
-
+psycopg2
+whitenoise

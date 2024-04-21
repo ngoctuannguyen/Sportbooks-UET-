@@ -65,6 +65,16 @@ MIDDLEWARE = [
 
 ]
 
+CORS_ALLOWED_ORIGIN = [
+    'http://localhost:8000'
+]
+
+# STORAGES = {
+#     'staticfiles': {
+#         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+#     },
+# }
+
 # AUTHENTICATION_BACKENDS = [
 #     'axes.backends.AxesBackend',
 #     'django.contrib.auth.backends.ModelBackend',
