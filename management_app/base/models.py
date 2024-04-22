@@ -1,3 +1,4 @@
+import datetime
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
@@ -123,12 +124,21 @@ class payments(models.Model):
 
 # Redis
 class Order(models.Model):
-    order_id = models.IntegerField(primary_key=True)
+    # order_id = models.IntegerField(primary_key=True)
+    # customer_id = models.ForeignKey('Customer',on_delete=models.CASCADE,db_column='customer_id')
+    # product_id = models.ForeignKey('Product1',on_delete=models.CASCADE,db_column='product_id')
+    # quantity = models.IntegerField()
+    # price = models.IntegerField()
+    # orderDate = models.DateTimeField()
+    order_id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey('Customer',on_delete=models.CASCADE,db_column='customer_id')
     product_id = models.ForeignKey('Product1',on_delete=models.CASCADE,db_column='product_id')
     quantity = models.IntegerField()
     price = models.IntegerField()
     orderDate = models.DateTimeField()
+
+    def __str__(self):
+        return f"Order {self.order_id}"
 # class ExampleModel(models.Model):
 #     name = models.CharField(max_length=100)
 #     redis_connection = get_redis_connection()

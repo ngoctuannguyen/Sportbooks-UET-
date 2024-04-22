@@ -7,9 +7,9 @@ from django.core.cache import cache
 from email import *
 from django.db import connection
 
-from .serializers import CartSerializer,UserSerializer
+from .serializers import CartSerializer,UserSerializer,OrderSerializer
 
-from . models import Cart, Product1, User
+from . models import Cart, Product1, User, Order
 
 connect_sql = connection.cursor()
 
@@ -127,3 +127,50 @@ def user_detail(request, pk):
     elif request.method == 'DELETE': #xóa 
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET'])
+def order_list(request):
+    orders = Order.objects.all()
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def create_order(request):
+    serializer = OrderSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def order_detail(request, pk):
+    try:
+        order = Order.objects.get(pk=pk)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = OrderSerializer(order)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def update_order(request, pk):
+    try:
+        order = Order.objects.get(pk=pk)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = OrderSerializer(order, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_order(request, pk):
+    try:
+        order = Order.objects.get(pk=pk)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    order.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

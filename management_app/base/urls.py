@@ -32,5 +32,15 @@ urlpatterns = [
           name= 'users'),
     path('users/<int:pk>/',
           views.user_detail),
+    path('orders/',
+          views.order_list),
+    path('orders/<int:pk>/',
+          views.order_detail),
+    path('orders/create/',
+          views.create_order),
+    path('orders/update/<int:pk>/',
+          views.update_order),
+    path('orders/delete/<int:pk>/',
+          views.delete_order),
     
 ]
