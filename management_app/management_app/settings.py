@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'base.apps.BaseConfig',
     'debug_toolbar',
-
+    # 'base.apps.OtpAppConfig',
     'axes',
 ]
 
@@ -75,10 +75,10 @@ CORS_ALLOWED_ORIGIN = [
 #     },
 # }
 
-# AUTHENTICATION_BACKENDS = [
-#     'axes.backends.AxesBackend',
-#     'django.contrib.auth.backends.ModelBackend',
-# ]
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 ROOT_URLCONF = 'management_app.urls'
 
@@ -163,6 +163,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# AUTH_USER_MODEL = 'base.CustomerUser'
 
 
 # Internationalization
