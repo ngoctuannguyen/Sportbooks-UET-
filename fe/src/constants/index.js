@@ -80,7 +80,35 @@ export const navBarList = [
   {
     _id: 1005,
     title: "Order",
-    link: "/journal",
+    link: "/order",
+  },
+];
+
+export const navBarListAdmin = [
+  {
+    _id: 1001,
+    title: "Home",
+    link: "/admin",
+  },
+  {
+    _id: 1002,
+    title: "Product",
+    link: "/admin/product",
+  },
+  {
+    _id: 1003,
+    title: "Order",
+    link: "/admin/order",
+  },
+  {
+    _id: 1004,
+    title: "User",
+    link: "/admin/user",
+  },
+  {
+    _id: 1005,
+    title: "About",
+    link: "/admin/about",
   },
 ];
 // =================== NavBarList End here ======================

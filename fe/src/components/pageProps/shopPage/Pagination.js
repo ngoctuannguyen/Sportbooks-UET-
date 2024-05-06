@@ -24,7 +24,7 @@ function Items({ currentItems, selectedBrands, selectedCategories }) {
     <>
       {filteredItems.map((item) => (
         <div key={item._id} className="w-full">
-          <Product
+          <Product isAdmin = {false}
             _id={item._id}
             img={item.img}
             productName={item.productName}
@@ -41,7 +41,7 @@ function Items({ currentItems, selectedBrands, selectedCategories }) {
   );
 }
 
-const Pagination = ({ itemsPerPage }) => {
+const Pagination = ({ itemsPerPage, isAdmin }) => {
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
 
