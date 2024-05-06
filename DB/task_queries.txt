@@ -8,8 +8,19 @@ Thêm sản phẩm mới.
 Cập nhật thông tin sản phẩm.
 Xóa sản phẩm.
 Xem danh sách sản phẩm theo danh mục
-Lọc sản phẩm theo thương hiệu và giá cả
 Thống kê sản phẩm tồn kho
+--- Backup đoạn này, restore một cái cho admin quyền r & w.
+
+---------------------------------QUẢN LÝ GIỎ
+
+Lấy danh sách tất cả các giỏ.
+Lấy danh sách tất cả sản phẩm thuộc giỏ đó.
+Lấy thông tin chi tiết về giỏ.
+Lọc sản phẩm theo thương hiệu, màu sắc, kích thước, v.v.
+Xóa giỏ 
+---- Đoạn này nhờ mn cùng nghĩ
+
+
 ---------------------------------QUẢN LÝ ĐƠN HÀNG
 
 Lấy danh sách tất cả đơn hàng.
@@ -19,6 +30,12 @@ Lọc đơn hàng theo trạng thái (đang chờ xử lý, đã thanh toán, đ
 Thêm đơn hàng mới.
 Cập nhật trạng thái đơn hàng.
 Hủy đơn hàng.
+
+---------------------------------GIAO DỊCH (Viết transaction)
+Ghi thông tin giao dịch như thời gian giao dịch,
+Hình thức thanh toán
+Khi hủy hàng có thêm trạng thái hoàn tiền (Có hoặc không)
+
 ---------------------------------QUẢN LÝ KHÁCH KHÀNG
 
 Lấy danh sách tất cả khách hàng.
@@ -32,6 +49,7 @@ Xem đơn hàng theo trạng thái
 
 ---------------------------------QUẢN LÝ SỰ KIỆN
 
+-- MONGODB
 Lấy danh sách tất cả sự kiện.
 Lấy thông tin chi tiết về một sự kiện cụ thể.
 Tìm kiếm sự kiện theo tên, ngày diễn ra, địa điểm, v.v.
@@ -39,15 +57,23 @@ Lọc sự kiện theo loại sự kiện, giá vé, v.v.
 Thêm sự kiện mới.
 Cập nhật thông tin sự kiện.
 Xóa sự kiện.
+
 ---------------------------------QUẢN LÝ VÉ
 
 Lấy danh sách tất cả vé cho một sự kiện cụ thể.
 Lấy thông tin chi tiết về một vé cụ thể.
 Kiểm tra tính khả dụng của vé cho một sự kiện cụ thể.
 Đặt vé cho một sự kiện.
-Hủy vé cho một sự kiện.
+Hủy vé cho một sự kiện. -- SQL
 
 
-Tìm kiếm sản phẩm bán chạy nhất.
+Tìm kiếm sản phẩm bán chạy nhất. Recommend
 Phân tích doanh thu bán hàng theo thời gian.
 Gửi email thông báo cho khách hàng về các sản phẩm mới hoặc sự kiện sắp diễn ra.
+
+MONGODB:
+- product image
+- email
+- user info
+- review, comment
+- event

@@ -4,7 +4,7 @@
     SELECT * FROM products WHERE productId = id;
     SELECT * FROM products WHERE productName = 'name';
 -- Tìm kiểm sản phẩm theo tên:
-    SELECT * FROM products WHERE productName LIKE '%name%'; -- chưa tối ưu
+    SELECT * FROM products WHERE productName LIKE '%name%'; -- chưa tối ưu -> index name của product
 -- Theo danh mục:
     SELECT * FROM products p JOIN categories c ON p.catId = c.catId WHERE c.catName = 'category';
 -- theo giá cả:
