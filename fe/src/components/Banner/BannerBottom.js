@@ -1,6 +1,6 @@
 import React from "react";
 import { MdLocalShipping } from "react-icons/md";
-import { CgRedo } from "react-icons/cg";
+import { CgRedo, CgAdd } from "react-icons/cg";
 
 const BannerBottom = () => {
   return (

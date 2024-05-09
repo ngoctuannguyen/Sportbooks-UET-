@@ -6,9 +6,10 @@ import { motion } from "framer-motion";
 import { logo, logoLight } from "../../../assets/images";
 import Image from "../../designLayouts/Image";
 import { navBarList } from "../../../constants";
+import { navBarListAdmin } from "../../../constants";
 import Flex from "../../designLayouts/Flex";
 
-const Header = () => {
+const Header = ({ isAdmin }) => {
   const [showMenu, setShowMenu] = useState(true);
   const [sidenav, setSidenav] = useState(false);
   const [category, setCategory] = useState(false);
@@ -32,7 +33,7 @@ const Header = () => {
         <Flex className="flex items-center justify-between h-full">
           <Link to="/">
             <div>
-              <Image className="w-20 object-cover" imgSrc={logo} />
+              <Image className="w-32 object-cover" imgSrc={logo} />
             </div>
           </Link>
           <div>
@@ -44,17 +45,31 @@ const Header = () => {
                 className="flex items-center w-auto z-50 p-0 gap-2"
               >
                 <>
-                  {navBarList.map(({ _id, title, link }) => (
-                    <NavLink
-                      key={_id}
-                      className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center px-12 text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#262626] md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0"
-                      to={link}
-                      state={{ data: location.pathname.split("/")[1] }}
-                    >
-                      <li>{title}</li>
-                    </NavLink>
-                  ))}
+                  {isAdmin ? (
+                    navBarListAdmin.map(({ _id, title, link }) => (
+                      <NavLink
+                        key={_id}
+                        className={`flex font-normal hover:font-bold w-20 h-6 justify-center items-center px-12 text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#262626] md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0 ${location.pathname.includes(link) ? 'active' : ''}`}
+                        to={link}
+                        state={{ data: location.pathname.split("/")[1] }}
+                      >
+                        <li>{title}</li>
+                      </NavLink>
+                    ))
+                  ) : (
+                    navBarList.map(({ _id, title, link }) => (
+                      <NavLink
+                        key={_id}
+                        className={`flex font-normal hover:font-bold w-20 h-6 justify-center items-center px-12 text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#262626] md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0 ${location.pathname === link ? 'active' : ''}`}
+                        to={link}
+                        state={{ data: location.pathname.split("/")[1] }}
+                      >
+                        <li>{title}</li>
+                      </NavLink>
+                    ))
+                  )}
                 </>
+
               </motion.ul>
             )}
             <HiMenuAlt2
