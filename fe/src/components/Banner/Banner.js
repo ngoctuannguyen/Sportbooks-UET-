@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import {
   bannerImgOne,
-  bannerImgTwo,
-  bannerImgThree,
+  // bannerImgTwo,
+  // bannerImgThree,
 } from "../../assets/images";
 import Image from "../designLayouts/Image";
 
