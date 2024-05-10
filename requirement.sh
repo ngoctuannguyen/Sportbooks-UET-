@@ -10,3 +10,8 @@ mysqlclient
 django-axes
 psycopg2
 whitenoise
+pika
+confluent-kafka
+kafka-python    
+django-cors-headers
+# npm install axios

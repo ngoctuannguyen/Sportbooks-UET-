@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,7 +48,10 @@ INSTALLED_APPS = [
     'debug_toolbar',
     # 'base.apps.OtpAppConfig',
     'axes',
+    'corsheaders',
 ]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'fe', 'build', 'static')]
 
 SITE_ID = 1
 
@@ -61,13 +65,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'axes.middleware.FailedLoginMiddleware',
-    'axes.middleware.AxesMiddleware'
+    'axes.middleware.AxesMiddleware',
+    'coresheaders.middleware.CorsMiddleWare'
 
 ]
 
 CORS_ALLOWED_ORIGIN = [
-    'http://localhost:8000'
+    'http://localhost:8000',
+    # 'http://localhost:'
 ]
+
 
 # STORAGES = {
 #     'staticfiles': {
@@ -85,7 +92,7 @@ ROOT_URLCONF = 'management_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'fe', 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -188,6 +195,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# KAFKA
+KAFKA_BOOTSTRAP_SERVERS = ['localhost:8000']
+KAFKA_CONSUMER_GROUP = 'my-group'
+KAFKA_TOPIC_PREFIX = 'my-topic'
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
