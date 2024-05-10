@@ -15,7 +15,7 @@ const HeaderBottom = (isAdmin) => {
   const ref = useRef();
   useEffect(() => {
     document.body.addEventListener("click", (e) => {
-      if (ref.current.contains(e.target)) {
+      if (ref.current && ref.current.contains(e.target)) {
         setShow(true);
       } else {
         setShow(false);
