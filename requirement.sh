@@ -10,3 +10,5 @@ mysqlclient
 django-axes
 psycopg2
 whitenoise
+djangorestframework_simplejwt
+torch

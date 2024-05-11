@@ -46,8 +46,15 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'debug_toolbar',
     # 'base.apps.OtpAppConfig',
+    'rest_framework_simplejwt',
     'axes',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 SITE_ID = 1
 
@@ -107,16 +114,25 @@ WSGI_APPLICATION = 'management_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'sqlite',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'sportbooksUET',
+        # 'USER': 'admin',
+        # 'PASSWORD': '12345678',
+        # 'HOST': 'spb-db1.ct4q266m0rka.ap-southeast-1.rds.amazonaws.com',
+        # 'PORT': 3306
     },
     'mysql': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_project',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
+        'NAME': 'sportbooksUET',
+        'USER': 'admin',
+        'PASSWORD': '12345678',
+        'HOST': 'spb-db1.ct4q266m0rka.ap-southeast-1.rds.amazonaws.com',
         'PORT': 3306
     }
+    # 'mongodb': {
+
+    # }
 }
 
 # 
