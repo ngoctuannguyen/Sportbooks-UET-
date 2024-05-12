@@ -1,0 +1,29 @@
+ eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1492
+        inet 172.18.135.206  netmask 255.255.240.0  broadcast 172.18.143.255
+        inet6 fe80::215:5dff:fe9e:9a95  prefixlen 64  scopeid 0x20<link>
+        ether 00:15:5d:9e:9a:95  txqueuelen 1000  (Ethernet)
+        RX packets 664  bytes 723321 (723.3 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 483  bytes 70893 (70.8 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 14  bytes 6062 (6.0 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 14  bytes 6062 (6.0 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+connect:
+
+
+netsh interface portproxy add v4tov4 listenport=6379 listenaddress=0.0.0.0 connectport=6379 connectaddress=172.18.135.206
+redis-cli -h redis-16552.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com -p 16552 -a hVLyo8rH49D11HO8iBJnofLZO2Cb1tEE PING
+
+#test
+from django.core.cache import cache
+cache.set('my_key', 'hello, world!', timeout=30)
+value = cache.get('my_key')
+print(value)

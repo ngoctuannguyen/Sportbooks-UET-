@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.cache import cache
+from .authenticate import IsAuthenticated,IsAdminUser
 
 from email import *
+
 from django.db import connection
 
 from .serializers import CartSerializer,UserSerializer,OrderSerializer
@@ -105,11 +107,16 @@ def user_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, pk):
+    key = f"user_{pk}"  # Tạo cache key dựa trên ID 
+
     try:
-        user = User.objects.get(pk=pk)
+        user = cache.get(key)  
+        if not user:
+            user = User.objects.get(pk=pk) #truy vấn từ database
+            cache.set(key, user, timeout=3600)  
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -121,15 +128,28 @@ def user_detail(request, pk):
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            # Xóa cache sau khi cập nhật để cập nhật dữ liệu mới
+            cache.delete(key)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE': #xóa 
         user.delete()
+        cache.delete(key)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 @api_view(['GET'])
-def order_list(request):
+@IsAuthenticated([IsAuthenticated])
+def orderListUser(request):
+    # Lấy danh sách đơn hàng của người dùng đã xác thực
+    orders = Order.objects.filter(user=request.user)
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@IsAdminUser([IsAdminUser])
+def allOrders(request):
+    # Lấy danh sách tất cả các đơn hàng cho admin
     orders = Order.objects.all()
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
@@ -174,3 +194,5 @@ def delete_order(request, pk):
     
     order.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+#redis

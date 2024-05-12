@@ -116,7 +116,7 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': 3306
-    }
+    },
 }
 
 # 
@@ -130,17 +130,25 @@ DATABASES = {
 # CELERY_TIMEZONE = 'Asia/Shanghai'
 
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
-        # "OPTIONS": {
-        #     "CLIENT_CLASS": "django_redis.client.DefaultClient"
-        # }
-    }
+    # "default": {
+    #     "BACKEND": "django.core.cache.backends.redis.RedisCache",
+    #     "LOCATION": "redis://127.0.0.1:6379",
+    #     # "OPTIONS": {
+    #     #     "CLIENT_CLASS": "django_redis.client.DefaultClient"
+    #     # }
+    # },
     # "default": {
     #     "BACKEND": "django.core.cache.backends.db.DatabaseCache",
     #     "LOCATION": "my_cache_table",
     # }
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis-16552.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com:16552",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": "hVLyo8rH49D11HO8iBJnofLZO2Cb1tEE",
+        }
+    }
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"

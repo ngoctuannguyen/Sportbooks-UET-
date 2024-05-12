@@ -54,6 +54,20 @@ class Product1(models.Model):
             'date_modified': self.date_modified,
             'product_count': self.product_count
         }
+
+class Product(models.Model):
+    productName = models.CharField(max_length=120, null=False)
+    catId = models.ForeignKey('Category', on_delete=models.CASCADE, db_column='catId', null=True)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    stock_quantity = models.IntegerField(null=True)
+    inStock = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'products'  # Tên bảng trong cơ sở dữ liệu
+
+    def __str__(self):
+        return self.productName
     
 # # Categories table
 class Categories(models.Model):
