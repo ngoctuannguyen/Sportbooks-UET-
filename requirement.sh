@@ -12,3 +12,4 @@ psycopg2
 whitenoise
 djangorestframework_simplejwt
 torch
+confluent-kafka

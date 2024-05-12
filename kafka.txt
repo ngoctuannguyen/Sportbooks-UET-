@@ -1,0 +1,14 @@
+Start zookeeper:
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+Start Kafka server:
+.\bin\windows\kafka-server-start.bat .\config\server.properties
+
+Create topic:
+kafka-topics.bat --create --topic .... --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1
+
+Start producer:
+kafka-console-producer.bat --topic tutorialspedia --bootstrap-server localhost:9092
+
+Start consumer:
+kafka-console-consumer.bat --topic tutorialspedia --bootstrap-server localhost:9092 --from-beginning
