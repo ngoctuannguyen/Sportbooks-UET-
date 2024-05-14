@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from . import redis
+from . import redis1
 
 urlpatterns = [
     
@@ -16,12 +16,12 @@ urlpatterns = [
     ),
     path(
         'cache',
-        redis.cached,
+        redis1.cached,
         name='cached'
     ),
     path(
         'cacheless',
-        redis.cacheless,
+        redis1.cacheless,
         name='cacheless'
     ),
     path('cart', 

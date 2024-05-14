@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     # 'base.apps.OtpAppConfig',
     'rest_framework_simplejwt',
     'axes',
+    # 'django_rbac_permissions',
+    'django_json_widget',
 ]
 
 REST_FRAMEWORK = {

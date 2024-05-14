@@ -6,6 +6,19 @@ import secrets
 
 # from django_redis import get_redis_connection
 from django.core.cache import cache
+
+#we added a description field to store a text description for each group.
+from django.contrib.auth.models import Group
+my_group = Group.objects.get(name='admin') 
+
+
+# my_group.user_set.add('NTN0301')
+# user = User()
+# User.groups.add('NTN0301')
+
+# class CustomGroup(Group):
+#     description = models.TextField(blank=True)
+
 #from receiver import *
 
 # Create your models here.
