@@ -9,7 +9,7 @@ from django.core.cache import cache
 
 #we added a description field to store a text description for each group.
 from django.contrib.auth.models import Group
-my_group = Group.objects.get(name='admin') 
+# my_group = Group.objects.get(name='admin') 
 
 
 # my_group.user_set.add('NTN0301')

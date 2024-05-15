@@ -111,7 +111,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'axes.middleware.FailedLoginMiddleware',
-    'axes.middleware.AxesMiddleware'
+    'axes.middleware.AxesMiddleware',
+    "django.middleware.cache.UpdateCacheMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
 
 ]
 
@@ -157,7 +160,7 @@ WSGI_APPLICATION = 'management_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'sqlite',
+        'NAME': BASE_DIR / 'sqlite.sqlite3',
         # 'ENGINE': 'django.db.backends.mysql',
         # 'NAME': 'sportbooksUET',
         # 'USER': 'admin',
@@ -195,7 +198,8 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PASSWORD": "hVLyo8rH49D11HO8iBJnofLZO2Cb1tEE",
-        }
+        },
+        "TIMEOUT": 60,
     }
 }
 
