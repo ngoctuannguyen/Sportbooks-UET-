@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework import status
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
@@ -8,12 +10,28 @@ from django.contrib.auth.decorators import login_required
 from email import *
 from django.db import connection
 
-from .serializers import CartSerializer,UserSerializer,OrderSerializer
+from .serializers import *
 
-from . models import Cart, Product1, User, Order
+from . models import *
 
 connect_sql = connection.cursor()
+class CategoriesView(APIView):
+    def get(self, request):
+        # connect_sql.execute('SELECT * FROM base_Categories')
+        # categories = connect_sql.fetchall()
+        # column = [col[0] for col in connect_sql.description]
+        # items = [dict(zip(column, row)) for row in categories]
+        # return Response(categories,status=status.HTTP_200_OK)
+        output = [{'name':output.name} for output in Categories.objects.all()]
+        return Response(output,status=status.HTTP_200_OK)
 
+    def post(self, request):
+        name = request.data['name']
+        serialize = CategorySerializer(data=name)
+        if serialize.is_valid():
+            serialize.save()
+            connect_sql.execute('INSERT INTO base_Categories (name) VALUES (%s)', [name])
+            return Response(serialize.data,status=status.HTTP_201_CREATED)   
 
 @login_required(login_url='/admin/')
 @api_view(['GET'])
@@ -40,7 +58,7 @@ def view_products(request):
 # # Lọc sản phẩm theo thương hiệu, màu sắc, kích thước, v.v.
 
 
-# @api_view(['POST'])
+@api_view(['POST'])
 # Thêm sản phẩm mới.
 def view_insert_product(request, 
                         name,
@@ -154,15 +172,46 @@ def update_order(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
 def delete_order(request, pk):
     try:
         order = Order.objects.get(pk=pk)
     except Order.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    order.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ProductView(generics.GenericAPIView):
+    queryset = Product1.objects.all()
+    serializer_class = ProductSerializer
+
+    def get(self, request):
+        products = self.get_queryset()
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class CustomerView(generics.ListCreateAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+    def get(self, request):
+        customers = self.get_queryset()
+        serializer = self.serializer_class(customers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
 
 
 # #USER 

@@ -48,11 +48,16 @@ INSTALLED_APPS = [
     # 'base.apps.OtpAppConfig',
     'rest_framework_simplejwt',
     'axes',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    
     ],
 }
 
@@ -67,15 +72,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'axes.middleware.FailedLoginMiddleware',
-    'axes.middleware.AxesMiddleware'
-
+    'axes.middleware.FailedLoginMiddleware',
+    # 'axes.middleware.AxesMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 CORS_ALLOWED_ORIGIN = [
     'http://localhost:8000'
 ]
 
+CORS_ALLOWED_ORIGIN_ALL = True
 # STORAGES = {
 #     'staticfiles': {
 #         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
@@ -83,11 +89,13 @@ CORS_ALLOWED_ORIGIN = [
 # }
 
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesBackend',
-    'django.contrib.auth.backends.ModelBackend',
+   'axes.backends.AxesBackend',
+   'django.contrib.auth.backends.ModelBackend',
+    
 ]
 
 ROOT_URLCONF = 'management_app.urls'
+
 
 TEMPLATES = [
     {

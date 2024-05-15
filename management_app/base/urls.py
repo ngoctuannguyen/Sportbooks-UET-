@@ -1,9 +1,9 @@
 from django.urls import path
 from . import views
 from . import redis
+from base.views import *
 
 urlpatterns = [
-    
     path(
         '', 
         views.view_product_detail,
@@ -42,5 +42,4 @@ urlpatterns = [
           views.update_order),
     path('orders/delete/<int:pk>/',
           views.delete_order),
-    
-]
+    path('insertproduct/',views.view_insert_product)]

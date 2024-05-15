@@ -13,3 +13,4 @@ whitenoise
 djangorestframework_simplejwt
 torch
 confluent-kafka
+django-cors-headers
