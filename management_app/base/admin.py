@@ -1,10 +1,27 @@
 from django.contrib import admin
-from . models import Product1
+from . models import Product1, Cart, Customer, payments, Order, Account
 # from .models import CustomerUser, OtpToken
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
 # Register your models here.
 admin.site.register(Product1)
+admin.site.register(Cart)
+admin.site.register(Customer)
+admin.site.register(payments)
+admin.site.register(Order)
+
+class AccountInline(admin.StackedInline):
+    model = Account
+    can_delete = False
+    verbose_name_plural = 'user'
+
+class CustomizeUserAdmin(UserAdmin):
+    inlines = (AccountInline, )
+
+admin.site.unregister(User, )
+admin.site.register(User, CustomizeUserAdmin)
+
 # admin.site.register(ExampleModel)
 # class CustomUserAdmin(UserAdmin):
 #     add_fieldsets = (

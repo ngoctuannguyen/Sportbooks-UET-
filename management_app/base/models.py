@@ -43,22 +43,27 @@ my_group = Group.objects.get(name='admin')
 #     def __str__(self):
 #         return self.user.username
 
-class User(models.Model):
-    username = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=100)
+class Account(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    # username = models.CharField(max_length=100)
+    # email = models.EmailField(unique=True)
+    # password = models.CharField(max_length=100)
     
     #thông tin cá nhân
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    # first_name = models.CharField(max_length=50)
+    # last_name = models.CharField(max_length=50)
     date_of_birth = models.DateField(null=True, blank=True) # Cho phép null và blank
     phone_number = models.CharField(max_length=20, null=True, blank=True)
+    gender = models.CharField(
+        max_length=6,
+        choices=[('MALE', 'MALE'), ('FEMALE', 'FEMALE')]
+    )
 
      #thông tin đăng nhập
-    last_login = models.DateTimeField(null=True, blank=True)
+    # last_login = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.username
+        return self.user.username
 
 # Connect to MongoDB
 class Product1(models.Model):
@@ -170,18 +175,3 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.order_id}"
-# class ExampleModel(models.Model):
-#     name = models.CharField(max_length=100)
-#     redis_connection = get_redis_connection()
-#     def save(self, *args, **kwargs):
-#         self.redis_connection.set(self.name, self.name)
-#         super().save(*args, **kwargs)
-#     def retrieve_data(self):
-#         return self.redis_connection.get(self.name)
-
-# def get_data():
-#     data = cache.get('my_data')
-#     if data is None:
-#         # data = retrieve_data()    
-#         cache.set('my_data', data, timeout=3600)
-#     return data
