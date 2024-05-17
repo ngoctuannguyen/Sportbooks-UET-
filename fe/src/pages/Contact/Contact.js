@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
 import CardView from "../../components/CardView"; 
 import { cardviewData, setFilteredCardviewData } from '../../components/CardView';
-
+import axios from 'axios'
 const Contact = ({ isAdmin }) => {
   const [cardviewData, setCardviewData] = useState([]);
   const [filteredCardviewData, setFilteredCardviewData] = useState([]);
@@ -13,6 +13,17 @@ const Contact = ({ isAdmin }) => {
     setPrevLocation(location.state.data);
   }, [location]);
 
+  
+  const [details, setDetails] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:8000/customers/')
+      .then(res => {
+        setDetails(res.data);
+      })
+      .catch(err => {
+        console.error("There was an error making the request:", err);
+      });
+  }, []); // Empty dependency array ensures this runs only once
   const [clientName, setclientName] = useState("");
   const [email, setEmail] = useState("");
   const [messages, setMessages] = useState("");
@@ -169,16 +180,14 @@ const Contact = ({ isAdmin }) => {
             </div>
             {/* Display the card views */}
             <div className="grid grid-cols-6 gap-4 mt-16">
-              {users.map((user) => (
+              {details.map((ouput,id) => (
                 <CardView
-                  key={user.id}
-                  image={user.image}
-                  name={user.name}
-                  id={user.id}
-                  phone={user.phone}
-                  email={user.email}
-                  address={user.address}
-                  membership={user.membership}
+                image={"https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg"}
+                  name={ouput.customer_fname + ouput.customer_lname}
+                  phone={ouput.phone}
+                  email={'example@gmail.com'}
+                  address={'exampleaddress'}
+                  membership={'Gold'}
                 />
               ))}
             </div>

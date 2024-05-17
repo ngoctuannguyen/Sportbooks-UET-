@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from . import redis1
-
+from base.views import *
 urlpatterns = [
     
     path(

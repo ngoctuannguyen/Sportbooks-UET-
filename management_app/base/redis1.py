@@ -12,7 +12,7 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.cache import cache
-from . models import Product1
+from . models import Products
 from rest_framework import status
 # from .models import UserProfile
 

@@ -14,3 +14,6 @@ djangorestframework_simplejwt
 torch
 confluent-kafka
 mysql-replication
+django-cors-headers
+axes
+axios

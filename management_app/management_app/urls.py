@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required, permission_required
 from rest_framework_simplejwt import views as jwt_views
-
+from base.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +27,7 @@ urlpatterns = [
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     # path('admin/defender/', include('defender.urls')) # defender admin
+    path('customers/',CustomerView.as_view(), name='home'),
+    path('api/products/',ProductView.as_view(), name='products'),
+    path('api/contact/',ContactView.as_view(), name='contactdetails'),
 ]

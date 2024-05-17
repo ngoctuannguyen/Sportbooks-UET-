@@ -1,15 +1,15 @@
 from django.contrib import admin
-from . models import Product1, Cart, Customer, payments, Order, Account
+from . models import Products, Cart, Customers, Payments, Orders, Account
 # from .models import CustomerUser, OtpToken
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 # Register your models here.
-admin.site.register(Product1)
+admin.site.register(Products)
 admin.site.register(Cart)
-admin.site.register(Customer)
-admin.site.register(payments)
-admin.site.register(Order)
+admin.site.register(Customers)
+admin.site.register(Payments)
+admin.site.register(Orders)
 
 class AccountInline(admin.StackedInline):
     model = Account

@@ -1,16 +1,17 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework import status
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
-
+from rest_framework import generics
 from email import *
 from django.db import connection
 
-from .serializers import CartSerializer,UserSerializer,OrderSerializer
+from .serializers import *
 
-from . models import Cart, Product1, User, Order
+from . models import *
 
 connect_sql = connection.cursor()
 
@@ -31,7 +32,7 @@ def view_product_detail(request):
 # @login_required(login_url='admin')
 @api_view(['GET'])
 def view_products(request):
-    products = Product1.objects.all()
+    products = Products.objects.all()
     results = [product.to_json() for product in products]
     return Response(results, status=status.HTTP_201_CREATED)
 
@@ -49,18 +50,18 @@ def view_insert_product(request,
                         star='',
                         description='',
                         date_created=''):
-    product = Product1(name, category, price, star, description, description, date_created)
+    product = Products(name, category, price, star, description, description, date_created)
     product.save()
     return Response(product.to_json, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def view_delete_product(request, name):
-    product = Product1.objects.get(name=name)
+    product = Products.objects.get(name=name)
     product.delete()
 
 @api_view(['GET'])
 def view_remaining_product(request):
-    product = Product1.objects.raw('select * from ... \
+    product = Products.objects.raw('select * from ... \
                                    where count > 0')
     return Response(product.to_json(), status=status.HTTP_202_ACCEPTED)
 
@@ -119,7 +120,7 @@ def user_detail(request, pk):
     
 @api_view(['GET'])
 def order_list(request):
-    orders = Order.objects.all()
+    orders = Orders.objects.all()
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
@@ -134,8 +135,8 @@ def create_order(request):
 @api_view(['GET'])
 def order_detail(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-    except Order.DoesNotExist:
+        order = Orders.objects.get(pk=pk)
+    except Orders.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     serializer = OrderSerializer(order)
@@ -144,8 +145,8 @@ def order_detail(request, pk):
 @api_view(['PUT'])
 def update_order(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-    except Order.DoesNotExist:
+        order = Orders.objects.get(pk=pk)
+    except Orders.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     serializer = OrderSerializer(order, data=request.data)
@@ -157,14 +158,61 @@ def update_order(request, pk):
 @api_view(['DELETE'])
 def delete_order(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-    except Order.DoesNotExist:
+        order = Orders.objects.get(pk=pk)
+    except Orders.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     order.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ProductView(generics.GenericAPIView):
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
 
+    def get(self, request):
+        products = self.get_queryset()
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomerView(generics.GenericAPIView):
+    queryset = Customers.objects.all()
+    serializer_class = CustomerSerializer
+    
+    def get(self,request):
+        customers = self.get_queryset() 
+        serializer = self.get_serializer(customers, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContactView(generics.GenericAPIView):
+    queryset = Contactdetails.objects.all()
+    serializer_class = ContactDetailSerializer
+    
+    def get(self,request):
+        contacts = self.get_queryset() 
+        serializer = self.get_serializer(contacts, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)     
 # #USER 
 # from django.shortcuts import render, redirect
 # from .forms import RegisterForm

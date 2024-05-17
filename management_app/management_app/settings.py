@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-n-6-n@(5%d)@%tnrazef)v@#s+%8^^2wv9ph6!ya146dyz$qjc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.136.195.102', '127.0.0.1', '13.229.119.34', 'example.ml']
+ALLOWED_HOSTS = ['18.136.195.102', '127.0.0.1', '13.229.119.34', 'example.ml','localhost']
 
 # HOST IPS
 INTERNAL_IPS = [
@@ -52,11 +52,16 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     # 'django_rbac_permissions',
     'django_json_widget',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+
     ],
 }
 
@@ -115,18 +120,17 @@ MIDDLEWARE = [
     "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
+    'corsheaders.middleware.CorsMiddleware'
 
 ]
-
-CORS_ALLOWED_ORIGIN = [
-    'http://localhost:8000'
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 # STORAGES = {
 #     'staticfiles': {
 #         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
 #     },
 # }
+CORS_ALLOWED_ORIGIN_ALL = True
 
 AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesBackend',
@@ -159,14 +163,14 @@ WSGI_APPLICATION = 'management_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'sqlite.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'db',
         # 'ENGINE': 'django.db.backends.mysql',
         # 'NAME': 'sportbooksUET',
-        # 'USER': 'admin',
-        # 'PASSWORD': '12345678',
-        # 'HOST': 'spb-db1.ct4q266m0rka.ap-southeast-1.rds.amazonaws.com',
-        # 'PORT': 3306
+        'USER': 'root',
+        'PASSWORD': 'tungbu11',
+        'HOST': 'localhost',
+        'PORT': 3306
     },
     'mysql': {
         'ENGINE': 'django.db.backends.mysql',
