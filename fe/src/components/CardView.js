@@ -3,7 +3,7 @@ import React from 'react';
 const CardView = ({ image, name, id, phone, email, address, membership }) => {
 return (
     <div className="border rounded-lg p-4">
-        <img src={image} alt={name} className="w-24 h-24 rounded-full mx-auto mb-4" />
+        <img src={image} alt={name} className="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
         <h2 className="text-xl font-semibold text-center mb-2 truncate">{name}</h2>
         <button className={`block mx-auto font-bold text-xs text-center items-center rounded-full px-4 py-2 text-center mb-4 ${membership === 'Gold' ? 'bg-yellow-500' : membership === 'Silver' ? 'bg-gray-300' : 'bg-blue-200'}`}>{membership}</button>
         <div className="mt-4 text-xs">
