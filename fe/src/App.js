@@ -25,8 +25,9 @@ import Shop from "./pages/Shop/Shop";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const isAdmin = true;
+
 const Layout = () => {
-  const isAdmin = true;
   return (
     <div>
       <ToastContainer
@@ -56,7 +57,7 @@ const router = createBrowserRouter(
     <Route>
       <Route path="/" element={<Layout />}>
         {/* ==================== Header Navlink Start here =================== */}
-        <Route index element={<Home isAdmin={false} />}></Route>
+        <Route index element={<Home />}></Route>
         <Route path="/shop" element={<Shop />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route path="/contact" element={<Contact />}></Route>
@@ -66,7 +67,7 @@ const router = createBrowserRouter(
         <Route path="/product/:_id" element={<ProductDetails />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/paymentgateway" element={<Payment />}></Route>
-        <Route path="/admin" element={<Home isAdmin />}></Route>
+        <Route path="/admin" element={<Home isAdmin={isAdmin} />}></Route>
         <Route path="/admin/product" element={<Shop isAdmin/>}></Route>
         <Route path="/admin/about" element={<About />}></Route>
         <Route path="/admin/user" element={<Contact isAdmin />}></Route>
