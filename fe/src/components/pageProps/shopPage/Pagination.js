@@ -6,7 +6,7 @@ import { paginationItems } from "../../../constants";
 
 const items = paginationItems;
 
-function Items({ currentItems, selectedBrands, selectedCategories }) {
+function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
   // Filter items based on selected brands and categories
   const filteredItems = currentItems.filter((item) => {
     const isBrandSelected =
@@ -24,7 +24,7 @@ function Items({ currentItems, selectedBrands, selectedCategories }) {
     <>
       {filteredItems.map((item) => (
         <div key={item._id} className="w-full">
-          <Product isAdmin = {false}
+          <Product isAdmin = {isAdmin}
             _id={item._id}
             img={item.img}
             productName={item.productName}
@@ -66,7 +66,7 @@ const Pagination = ({ itemsPerPage, isAdmin }) => {
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mdl:gap-4 lg:gap-10">
-        <Items
+        <Items isAdmin={isAdmin}
           currentItems={currentItems}
           selectedBrands={selectedBrands}
           selectedCategories={selectedCategories}
