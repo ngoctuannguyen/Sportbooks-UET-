@@ -115,11 +115,11 @@ MIDDLEWARE = [
     "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
-
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 CORS_ALLOWED_ORIGIN = [
-    'http://localhost:8000'
+    'http://localhost:3000'
 ]
 
 # STORAGES = {
@@ -175,7 +175,15 @@ DATABASES = {
         'PASSWORD': '12345678',
         'HOST': 'spb-db1.ct4q266m0rka.ap-southeast-1.rds.amazonaws.com',
         'PORT': 3306
-    }
+    },
+    'mysql1': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'db',
+        'USER': 'root',
+        'PASSWORD': '12345678',
+        'HOST': '127.0.0.1',
+        'PORT': 3306
+    },
     # 'mongodb': {
 
     # }
