@@ -31,9 +31,7 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
             price={item.price}
             color={item.color}
             badge={item.badge}
-            des={item.des}
             pdf={item.pdf}
-            ficheTech={item.ficheTech}
           />
         </div>
       ))}
@@ -90,7 +88,6 @@ const Pagination = ({ itemsPerPage, isAdmin }) => {
           Products from {itemStart} to {Math.min(endOffset, items.length)} of{" "}
           {items.length}
         </p>
-        <button onClick={() => console.log(selectedBrands)}> test</button>
       </div>
     </div>
   );

@@ -8,10 +8,12 @@ import Badge from "./Badge";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-const Product = (props, {isAdmin}) => {
+const Product = (props, { isAdmin }) => {
   const dispatch = useDispatch();
+  const notify = () => toast.success("Thêm vào giỏ hàng thành công!");
   const _id = props.productName;
   const idString = (_id) => {
     return String(_id).toLowerCase().split(" ").join("");
@@ -24,7 +26,7 @@ const Product = (props, {isAdmin}) => {
     console.log(isAdmin);
     console.log(props);
     console.log("productItem");
-    if (props.isAdmin) { 
+    if (props.isAdmin) {
       navigate(`/admin/product/${rootId}`, {
         state: {
           item: productItem,
@@ -58,7 +60,7 @@ const Product = (props, {isAdmin}) => {
 
             <ul className="w-full h-full flex flex-col items-end justify-center gap-2 font-titleFont px-2 border-l border-r">
               <li
-                onClick={() =>
+                onClick={() => {
                   dispatch(
                     addToCart({
                       _id: props._id,
@@ -69,8 +71,9 @@ const Product = (props, {isAdmin}) => {
                       price: props.price,
                       colors: props.color,
                     })
-                  )
-                }
+                  );
+                  notify();
+                }}
                 className="text-[#767676] hover:text-primeColor text-sm font-normal border-b-[1px] border-b-gray-200 hover:border-b-primeColor flex items-center justify-end gap-2 hover:cursor-pointer pb-1 duration-300 w-full"
               >
                 Add to Cart
