@@ -5,33 +5,28 @@ const Price = () => {
   const priceList = [
     {
       _id: 950,
-      priceOne: 0.0,
-      priceTwo: 49.99,
+      priceOne: 0,
+      priceTwo: 100,
     },
     {
       _id: 951,
-      priceOne: 50.0,
-      priceTwo: 99.99,
+      priceOne: 100,
+      priceTwo: 200,
     },
     {
       _id: 952,
-      priceOne: 100.0,
-      priceTwo: 199.99,
+      priceOne: 200,
+      priceTwo: 500,
     },
     {
       _id: 953,
-      priceOne: 200.0,
-      priceTwo: 399.99,
+      priceOne: 500,
+      priceTwo: 1000,
     },
     {
       _id: 954,
-      priceOne: 400.0,
+      priceOne: 1000,
       priceTwo: 599.99,
-    },
-    {
-      _id: 955,
-      priceOne: 600.0,
-      priceTwo: 1000.0,
     },
   ];
   return (
@@ -44,7 +39,7 @@ const Price = () => {
               key={item._id}
               className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center gap-2 hover:text-primeColor hover:border-gray-400 duration-300"
             >
-              ${item.priceOne.toFixed(2)} - ${item.priceTwo.toFixed(2)}
+              {item._id === 954 ? `> ${item.priceOne}k` : `${item.priceOne} - ${item.priceTwo}k`}
             </li>
           ))}
         </ul>

@@ -27,18 +27,18 @@ export const navBarList = [
   },
   {
     _id: 1003,
+    title: "Order",
+    link: "/order",
+  },
+  {
+    _id: 1004,
     title: "About",
     link: "/about",
   },
   {
-    _id: 1004,
+    _id: 1005,
     title: "Contact",
     link: "contact",
-  },
-  {
-    _id: 1005,
-    title: "Journal",
-    link: "/order",
   },
 ];
 

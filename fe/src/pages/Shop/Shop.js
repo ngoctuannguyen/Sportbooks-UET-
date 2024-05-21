@@ -19,7 +19,11 @@ const Shop = ({isAdmin}) => {
           <ShopSideNav />
         </div>
         <div className="w-full mdl:w-[80%] lgl:w-[75%] h-full flex flex-col gap-10">
-          <ProductBanner itemsPerPageFromBanner={itemsPerPageFromBanner} />
+          
+        <div className="w-full">
+              <input className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for products..." />
+              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md">Search</button>
+            </div>
           {isAdmin ? <Pagination isAdmin itemsPerPage={itemsPerPage} /> : <Pagination itemsPerPage={itemsPerPage} />}
         </div>
       </div>
