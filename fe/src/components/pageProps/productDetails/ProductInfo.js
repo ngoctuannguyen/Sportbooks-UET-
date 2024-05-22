@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
+import { toast } from "react-toastify";
 
 const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
+  const notify = () => toast.success("Thêm vào giỏ hàng thành công!");
   const [isEditing, setIsEditing] = useState(false);
   const [editedProductInfo, setEditedProductInfo] = useState(productInfo);
   const [initialProductInfo, setInitialProductInfo] = useState(productInfo); // Thêm state mới để lưu trữ thông tin ban đầu
@@ -172,7 +174,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
         )
       ) : (
         <button
-          onClick={() =>
+          onClick={() => {
             dispatch(
               addToCart({
                 _id: productInfo.id,
@@ -183,8 +185,9 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
                 price: productInfo.price,
                 colors: productInfo.color,
               })
-            )
-          }
+            );
+            notify();
+          }}
           className="w-full py-4 bg-blue-500 hover:bg-blue-600 duration-300 text-white text-lg font-titleFont"
         >
           Add to Cart
