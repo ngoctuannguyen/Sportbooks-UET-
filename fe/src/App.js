@@ -17,7 +17,7 @@ import SignUp from "./pages/Account/SignUp";
 import Cart from "./pages/Cart/Cart";
 import Contact from "./pages/Contact/Contact";
 import Home from "./pages/Home/Home";
-import Journal from "./pages/Journal/Journal";
+import Journal from "./pages/Order/Order";
 import Offer from "./pages/Offer/Offer";
 import Payment from "./pages/payment/Payment";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
@@ -25,7 +25,7 @@ import Shop from "./pages/Shop/Shop";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const isAdmin = true;
+const isAdmin = false;
 
 const Layout = () => {
   return (

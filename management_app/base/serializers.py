@@ -1,10 +1,21 @@
 from rest_framework import serializers
-from .models import Cart,User,Order
+from .models import Cart,User,Orders, Customers, Products, Categories
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = ['catId', 'catName']
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
-        fields = ['id', 'user', 'product_id', 'quantity', 'added_at']
+        fields = ['customerid', 'productid', 'quantity', 'date_added' ]
+
+class ProductSerializer(serializers.ModelSerializer):
+    catid = CategorySerializer(read_only=True)
+
+    class Meta:
+        model = Products
+        fields = ['productname', 'catid', 'description', 'price', 'stock_quantity', 'instock']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,5 +25,11 @@ class UserSerializer(serializers.ModelSerializer):
         
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Order
+        model = Orders
         fields = '__all__'
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customers
+        fields = '__all__'
+    def create(self, validated_data):
+        return Customers.objects.create(**validated_data)

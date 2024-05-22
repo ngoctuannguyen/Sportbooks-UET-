@@ -8,10 +8,24 @@ import Badge from "./Badge";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
+<<<<<<< HEAD
 import { toast } from "react-toastify";
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { toDate, getTimezoneOffset } from 'date-fns-tz';
 
-const Product = (props, {isAdmin}) => {
+const date = new Date();
+const timeZone = 'Asia/Ho_Chi_Minh';
+const zonedDate = toDate(date, { timeZone });
+const offset = getTimezoneOffset(timeZone, zonedDate);
+const dateWithOffset = new Date(zonedDate.getTime() - offset);
+=======
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+>>>>>>> feat/temporary
+
+const Product = (props, { isAdmin }) => {
   const dispatch = useDispatch();
+  const notify = () => toast.success("Thêm vào giỏ hàng thành công!");
   const _id = props.productName;
   const idString = (_id) => {
     return String(_id).toLowerCase().split(" ").join("");
@@ -24,7 +38,7 @@ const Product = (props, {isAdmin}) => {
     console.log(isAdmin);
     console.log(props);
     console.log("productItem");
-    if (props.isAdmin) { 
+    if (props.isAdmin) {
       navigate(`/admin/product/${rootId}`, {
         state: {
           item: productItem,
@@ -58,19 +72,31 @@ const Product = (props, {isAdmin}) => {
 
             <ul className="w-full h-full flex flex-col items-end justify-center gap-2 font-titleFont px-2 border-l border-r">
               <li
-                onClick={() =>
+<<<<<<< HEAD
+                onClick={
+                  
+                  () =>
+=======
+                onClick={() => {
+>>>>>>> feat/temporary
                   dispatch(
+                    
                     addToCart({
-                      _id: props._id,
-                      name: props.productName,
-                      quantity: 1,
-                      image: props.img,
-                      badge: props.badge,
-                      price: props.price,
-                      colors: props.color,
+                      // _id: props._id,
+                      // name: props.productName,
+                      // quantity: 1,
+                      // image: props.img,
+                      // badge: props.badge,
+                      // price: props.price,
+                      // colors: props.color,
+                      customerid :1,
+                      productid : 1,
+                      quantity : 1,
+                      date_added :  dateWithOffset.toISOString(),
                     })
-                  )
-                }
+                  );
+                  notify();
+                }}
                 className="text-[#767676] hover:text-primeColor text-sm font-normal border-b-[1px] border-b-gray-200 hover:border-b-primeColor flex items-center justify-end gap-2 hover:cursor-pointer pb-1 duration-300 w-full"
               >
                 Add to Cart

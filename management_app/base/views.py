@@ -1,16 +1,17 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework import status
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
-
+from rest_framework import generics
 from email import *
 from django.db import connection
 
-from .serializers import CartSerializer,UserSerializer,OrderSerializer
+from .serializers import *
 
-from . models import Cart, Product1, User, Order
+from . models import *
 
 connect_sql = connection.cursor()
 
@@ -31,7 +32,7 @@ def view_product_detail(request):
 # @login_required(login_url='admin')
 @api_view(['GET'])
 def view_products(request):
-    products = Product1.objects.all()
+    products = Products.objects.all()
     results = [product.to_json() for product in products]
     return Response(results, status=status.HTTP_201_CREATED)
 
@@ -49,35 +50,35 @@ def view_insert_product(request,
                         star='',
                         description='',
                         date_created=''):
-    product = Product1(name, category, price, star, description, description, date_created)
+    product = Products(name, category, price, star, description, description, date_created)
     product.save()
     return Response(product.to_json, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def view_delete_product(request, name):
-    product = Product1.objects.get(name=name)
+    product = Products.objects.get(name=name)
     product.delete()
 
 @api_view(['GET'])
 def view_remaining_product(request):
-    product = Product1.objects.raw('select * from ... \
+    product = Products.objects.raw('select * from ... \
                                    where count > 0')
     return Response(product.to_json(), status=status.HTTP_202_ACCEPTED)
 
-#giỏ hàng.
-@api_view(['GET', 'POST'])
-def cart_list(request):
-    if request.method == 'GET':
-        carts = Cart.objects.all()
-        serializer = CartSerializer(carts, many=True)
-        return Response(serializer.data)
+# #giỏ hàng.
+# @api_view(['GET', 'POST'])
+# def cart_list(request):
+#     if request.method == 'GET':
+#         carts = Cart.objects.all()
+#         serializer = CartSerializer(carts, many=True)
+#         return Response(serializer.data)
     
-    elif request.method == 'POST':
-        serializer = CartSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     elif request.method == 'POST':
+#         serializer = CartSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #user
 @api_view(['GET', 'POST'])
@@ -119,7 +120,7 @@ def user_detail(request, pk):
     
 @api_view(['GET'])
 def order_list(request):
-    orders = Order.objects.all()
+    orders = Orders.objects.all()
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
@@ -134,8 +135,8 @@ def create_order(request):
 @api_view(['GET'])
 def order_detail(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-    except Order.DoesNotExist:
+        order = Orders.objects.get(pk=pk)
+    except Orders.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     serializer = OrderSerializer(order)
@@ -144,8 +145,8 @@ def order_detail(request, pk):
 @api_view(['PUT'])
 def update_order(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-    except Order.DoesNotExist:
+        order = Orders.objects.get(pk=pk)
+    except Orders.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     serializer = OrderSerializer(order, data=request.data)
@@ -157,14 +158,241 @@ def update_order(request, pk):
 @api_view(['DELETE'])
 def delete_order(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-    except Order.DoesNotExist:
+        order = Orders.objects.get(pk=pk)
+    except Orders.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     order.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ProductView(generics.GenericAPIView):
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
 
+    def get(self, request):
+        products = self.get_queryset()
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomerView(generics.GenericAPIView):
+    queryset = Customers.objects.all()  # Không sử dụng "using"
+    serializer_class = CustomerSerializer
+    
+    def get(self, request):
+        customers = self.get_queryset() 
+        serializer = self.get_serializer(customers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CartView(generics.GenericAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        customer_id = data.get('customerid')
+        product_id = data.get('productid')
+        quantity = data.get('quantity', 1)
+        date_added = data.get('date_added')
+
+        
+        if not customer_id or not product_id:
+            return Response({'error': 'Missing customerid or productid'}, status=status.HTTP_400_BAD_REQUEST)
+
+       
+        try:
+            customer = Customers.objects.get(pk=customer_id)
+        except Customers.DoesNotExist:
+            return Response({'error': 'Invalid customerid'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Kiểm tra sự tồn tại và hợp lệ của sản phẩm
+        try:
+            product = Products.objects.get(pk=product_id)
+        except Products.DoesNotExist:
+            return Response({'error': 'Invalid productid'}, status=status.HTTP_404_NOT_FOUND)
+
+       
+        cart, created = Cart.objects.get_or_create(
+            customerid=customer,
+            productid=product,
+            defaults={'quantity': quantity, 'date_added': date_added}
+        )
+
+        
+        if not created:
+            cart.quantity += int(quantity)
+            cart.save()
+
+        serializer = self.get_serializer(cart)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class CartListView(generics.ListAPIView):
+
+    serializer_class = CartSerializer
+
+    def get_queryset(self):
+        customer_id = self.request.query_params.get('customerid')
+        if not customer_id:
+            return Cart.objects.none()
+        return Cart.objects.filter(customerid=customer_id)
+    
+    
+
+    
+
+
+# class ViewCartView(generics.ListAPIView):
+#     """
+#     API endpoint to view a list of cart items for a specific customer.
+#     """
+#     serializer_class = CartSerializer
+
+#     def get(self, request, *args, **kwargs):
+#         customerid = request.query_params.get('customerid')
+#         if not customerid:
+#             return Response({'error': 'Missing customerid parameter'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         queryset = self.get_queryset()  # Gọi phương thức get_queryset để lấy queryset cụ thể cho khách hàng
+#         queryset = queryset.filter(customerid=customerid)  # Lọc ra các mục giỏ hàng cho khách hàng cụ thể
+#         serializer = self.get_serializer(queryset, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     def get_queryset(self):
+#         return Cart.objects.using("mysql").all()  # Sử dụng `.all()` hoặc bất kỳ phương thức queryset nào khác bạn muốn ở đây
+
+
+class UpdateCartView(generics.UpdateAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+    def put(self, request, *args, **kwargs):
+        customer_id = self.request.query_params.get('customerid')
+        product_id = request.data.get('productid')
+        quantity = request.data.get('quantity')
+
+        if not customer_id:
+            return Response({"error": "Missing data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            cart = Cart.objects.get(customerid=customer_id, productid=product_id)
+            cart.quantity = quantity
+            cart.save()
+            return Response(CartSerializer(cart).data)
+        except Cart.DoesNotExist:
+            return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+        
+class RemoveFromCartView(generics.DestroyAPIView):
+    queryset = Cart.objects.all()  
+    serializer_class = CartSerializer
+
+    def delete(self, request, *args, **kwargs):
+        customer_id = self.request.query_params.get('customerid')
+        if not customer_id:
+            return Response({"error": "customerid is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            cart = Cart.objects.filter(customerid=customer_id)
+            if not cart.exists():
+                return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            cart.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class OrderCreateAPIView(APIView):
+    def post(self, request, format=None):
+        
+        serializer = OrderSerializer(data=request.data)
+        customer_id = request.data.get('customerid')
+        product_id = request.data.get('productd'),
+        quantity = request.data.get('quantity'),
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OrderDetailAPIView(APIView):
+    def get(self, request, orderid, format=None):
+        order = Orders.objects.get(orderid=orderid)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+class OrderUpdateAPIView(APIView):
+    def put(self, request, orderid, format=None):
+        order = Orders.objects.get(orderid=orderid)
+        serializer = OrderSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OrderDeleteAPIView(APIView):
+    def delete(self, request, orderid, format=None):
+        order = Orders.objects.get(orderid=orderid)
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# class OrderProductCreateAPIView(APIView):
+#     def post(self, request, format=None):
+#         # serializer = OrderProductSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class OrderProductListAPIView(APIView):
+#     def get(self, request, orderid, format=None):
+#         order_products = OrderProducts.objects.filter(orderid=orderid)
+#         serializer = OrderProductSerializer(order_products, many=True)
+#         return Response(serializer.data)
+# class OrderProductUpdateAPIView(APIView):
+#     def put(self, request, orderid, productid, format=None):
+#         order_product = OrderProducts.objects.get(orderid=orderid, productid=productid)
+#         serializer = OrderProductSerializer(order_product, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class OrderProductDeleteAPIView(APIView):
+#     def delete(self, request, orderid, productid, format=None):
+#         order_product = OrderProducts.objects.get(orderid=orderid, productid=productid)
+#         order_product.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+"""ABC"""
+
+# class ContactView(generics.GenericAPIView):
+#     queryset = Contactdetails.objects.all()
+#     serializer_class = ContactDetailSerializer
+    
+#     def get(self,request):
+#         contacts = self.get_queryset() 
+#         serializer = self.get_serializer(contacts, many=True)
+#         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+#     def post(self, request):
+#         serializer = self.get_serializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)     
 # #USER 
 # from django.shortcuts import render, redirect
 # from .forms import RegisterForm
@@ -284,4 +512,3 @@ def delete_order(request, pk):
 #             return redirect("signin")
         
 #     return render(request, "login.html")
-    

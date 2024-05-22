@@ -9,39 +9,203 @@ from django.core.cache import cache
 
 #we added a description field to store a text description for each group.
 from django.contrib.auth.models import Group
-# my_group = Group.objects.get(name='admin') 
+
+class Cart(models.Model):
+    customerid = models.ForeignKey('Customers', models.DO_NOTHING, db_column='customerId',default=1, primary_key=True)  # Field name made lowercase.
+    productid = models.ForeignKey('Products', models.DO_NOTHING, db_column='productId')  # Field name made lowercase.
+    quantity = models.IntegerField()
+    date_added = models.DateTimeField()
 
 
-# my_group.user_set.add('NTN0301')
-# user = User()
-# User.groups.add('NTN0301')
+    class Meta:
+        managed = True
+        db_table = 'cart'
+        unique_together = (('customerid', 'productid'),)
+       
 
-# class CustomGroup(Group):
-#     description = models.TextField(blank=True)
 
-#from receiver import *
 
-# Create your models here.
+class Categories(models.Model):
+    catid = models.AutoField(db_column='catId', primary_key=True)  # Field name made lowercase.
+    catname = models.CharField(db_column='catName', max_length=120)  # Field name made lowercase.
 
-# class CustomerUser(AbstractUser):
-   
-#     email = models.EmailField(unique=True)
-    
-#     USERNAME_FIELD = ("email")
-#     REQUIRED_FIELDS = ["username"]
-    
-#     def __str__(self):
-#         return self.email
-    
-# class OtpToken(models.Model):
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="otps")
-#     otp_code = models.CharField(max_length=6, default=secrets.token_hex(3))
-#     tp_created_at = models.DateTimeField(auto_now_add=True)
-#     otp_expires_at = models.DateTimeField(blank=True, null=True)
-    
-    
-#     def __str__(self):
-#         return self.user.username
+    class Meta:
+        managed = True
+        db_table = 'categories'
+
+
+class Contactdetails(models.Model):
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    district = models.CharField(max_length=45, blank=True, null=True)
+    city = models.CharField(max_length=45)
+    country = models.CharField(max_length=45)
+    zipcode = models.IntegerField()
+    phone = models.CharField(max_length=20)
+    street = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'contactdetails'
+
+
+class Customers(models.Model):
+    customer_id = models.AutoField(db_column='customer_Id', primary_key=True)  # Field name made lowercase.
+    customer_fname = models.CharField(max_length=60)
+    customer_lname = models.CharField(max_length=60)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'customers'
+
+
+class Orderproducts(models.Model):
+    orderid = models.OneToOneField('Orders', models.DO_NOTHING, db_column='orderId', primary_key=True)  # Field name made lowercase. The composite primary key (orderId, productId) found, that is not supported. The first column is selected.
+    productid = models.ForeignKey('Products', models.DO_NOTHING, db_column='productId')  # Field name made lowercase.
+    price = models.FloatField()
+    quantity = models.IntegerField()
+
+    class Meta:
+        managed = True
+        db_table = 'orderproducts'
+        unique_together = (('orderid', 'productid'),)
+
+
+class Orders(models.Model):
+    orderid = models.AutoField(db_column='orderId', primary_key=True)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customers, models.DO_NOTHING, db_column='customerId', blank=True, null=True)  # Field name made lowercase.       
+    orderdate = models.DateField(db_column='orderDate')  # Field name made lowercase.
+    shippingaddressid = models.ForeignKey(Contactdetails, models.DO_NOTHING, db_column='shippingAddressId')  # Field name made lowercase.
+    status = models.CharField(max_length=10)
+    deliverydate = models.DateField(db_column='deliveryDate')  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'orders'
+
+
+class Payments(models.Model):
+    paymentid = models.AutoField(db_column='paymentId', primary_key=True)  # Field name made lowercase.
+    orderid = models.ForeignKey(Orders, models.DO_NOTHING, db_column='orderId', blank=True, null=True)  # Field name made lowercase.
+    paymentdate = models.DateField(db_column='paymentDate', blank=True, null=True)  # Field name made lowercase.
+    amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    paymentmethod = models.CharField(db_column='paymentMethod', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'payments'
+
+
+class Productimages(models.Model):
+    productid = models.OneToOneField('Products', models.DO_NOTHING, db_column='productId', primary_key=True)  # Field name made lowercase. The composite primary key (productId, imageUrl) found, that is not supported. The first column is selected.
+    imageurl = models.CharField(db_column='imageUrl', max_length=45)  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'productimages'
+        unique_together = (('productid', 'imageurl'),)
+
+
+class Products(models.Model):
+    productname = models.CharField(db_column='productName', max_length=120)  # Field name made lowercase.
+    catid = models.ForeignKey(Categories, models.DO_NOTHING, db_column='catId', blank=True, null=True)  # Field name made lowercase.
+    description = models.TextField(blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    stock_quantity = models.IntegerField(blank=True, null=True)
+    instock = models.IntegerField(db_column='inStock', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'products'
+
+
+class Reviewimages(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    imageurl = models.CharField(db_column='imageUrl', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    reviewid = models.ForeignKey('Reviews', models.DO_NOTHING, db_column='reviewId')  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'reviewimages'
+
+
+class Reviews(models.Model):
+    reviewid = models.AutoField(db_column='reviewId', primary_key=True)  # Field name made lowercase.
+    productid = models.ForeignKey(Products, models.DO_NOTHING, db_column='productId', blank=True, null=True)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customers, models.DO_NOTHING, db_column='customerId', blank=True, null=True)  # Field name made lowercase.       
+    rating = models.IntegerField(blank=True, null=True)
+    reviewcomment = models.TextField(db_column='reviewComment', blank=True, null=True)  # Field name made lowercase.
+    reviewdate = models.DateField(db_column='reviewDate', blank=True, null=True)  # Field name made lowercase.
+    helpfulvotes = models.IntegerField(db_column='helpfulVotes', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'reviews'
+
+
+class Roles(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    rolename = models.CharField(db_column='roleName', max_length=45)  # Field name made lowercase.
+    created_at = models.DateTimeField(db_column='Created_at')  # Field name made lowercase.
+    updated_at = models.DateTimeField(db_column='Updated_at')  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'roles'
+
+
+class Tickets(models.Model):
+    ticketid = models.AutoField(db_column='ticketId', primary_key=True)  # Field name made lowercase. The composite primary key (ticketId, customerId) found, that is not supported. The first column is selected.
+    eventname = models.CharField(db_column='eventName', max_length=255)  # Field name made lowercase.
+    eventdate = models.DateField(db_column='eventDate', blank=True, null=True)  # Field name made lowercase.
+    venue = models.CharField(max_length=50, blank=True, null=True)
+    ticketprice = models.DecimalField(db_column='ticketPrice', max_digits=10, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    isavailable = models.IntegerField(db_column='isAvailable')  # Field name made lowercase.
+    customerid = models.ForeignKey(Customers, models.DO_NOTHING, db_column='customerId')  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'tickets'
+        unique_together = (('ticketid', 'customerid'),)
+
+
+
+
+
+class Trips(models.Model):
+    tripid = models.AutoField(db_column='tripId', primary_key=True)  # Field name made lowercase.
+    eventid = models.ForeignKey(Tickets, models.DO_NOTHING, db_column='eventId', blank=True, null=True)  # Field name made lowercase.
+    departuredate = models.DateField(db_column='departureDate', blank=True, null=True)  # Field name made lowercase.
+    returndate = models.DateField(db_column='returnDate', blank=True, null=True)  # Field name made lowercase.
+    eventdescription = models.TextField(db_column='eventDescription', blank=True, null=True)  # Field name made lowercase.
+    destination = models.CharField(max_length=60, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'trips'
+
+
+class Users(models.Model):
+    username = models.CharField(unique=True, max_length=45)
+    password = models.CharField(max_length=45)
+    email = models.CharField(unique=True, max_length=60, blank=True, null=True)
+    status = models.CharField(max_length=8)
+    role = models.ForeignKey(Roles, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'users'
+
+
+class Wishlist(models.Model):
+    customer = models.OneToOneField(Customers, models.DO_NOTHING, primary_key=True)  # The composite primary key (customer_id, product_id) found, that is not supported. The first column is selected.
+    product_id = models.IntegerField()
+    date_added = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'wishlist'
+        unique_together = (('customer', 'product_id'),)
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
@@ -64,114 +228,3 @@ class Account(models.Model):
 
     def __str__(self):
         return self.user.username
-
-# Connect to MongoDB
-class Product1(models.Model):
-    product_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200, null=False, blank=False)
-    category = models.CharField(max_length=100, null=False, blank=False,default='Shoes')
-    price = models.DecimalField(max_digits=4, decimal_places=2)
-    stars = models.IntegerField()
-    description = models.TextField(null=True, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_modified = models.DateTimeField(auto_now=True, blank=True)
-    product_count = models.IntegerField()
-
-    def __str__(self):
-        return self.name
-    
-    def to_json(self):
-        return {
-            # 'id': self.id,
-            'name': self.name,
-            'desc': self.description,
-            'price': self.price,
-            'date_created': self.date_created,
-            'date_modified': self.date_modified,
-            'product_count': self.product_count
-        }
-    
-# # Categories table
-class Categories(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200, null=False, blank=False)
-
-    def __str__(self):
-        return self.name
-    
-    class Meta: 
-        indexes = [
-            models.Index(fields=['name'])
-        ]
-
-#     ### How about indexing
-
-# # Products table
-    
-    
-# # Customers table
-class Customer(models.Model):
-    customer_id = models.AutoField(primary_key=True)
-    customer_name = models.CharField(max_length=60, null=False)
-    customer_email = models.CharField(max_length=50)
-    customer_address = models.TextField()
-    cumstomer_phonenumber = models.CharField(max_length=15)
-
-# # Order table
-# class Order(models.Model):
-
-# # # Review MongoDB
-# # class Reviews(models.Model):
-
-# # # History
-# # class History(models.Model):
-        # filter
-    
-# # # Tickets
-# # class Tickets(models.Model):
-
-# # # Trips
-# # class Trips(models.Model):
-
-
-# # # cart
-# # class Cart(models.Model):
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product_id = models.IntegerField()
-    quantity = models.IntegerField()
-    added_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = 'Cart'
-        verbose_name_plural = 'Carts'
-
-# # payments
-class payments(models.Model):
-    payment_id = models.AutoField(primary_key=True)
-    order_id = models.IntegerField()
-    payment_date = models.DateTimeField()
-    amount = models.DecimalField(decimal_places=2,max_digits=6)
-    payment_method = models.CharField(max_length=50)
-    order_id = models.ForeignKey("Order",  on_delete=models.CASCADE, db_column='order_id')
-
-    def __str__(self):
-        return self.payment_method
-
-# Redis
-class Order(models.Model):
-    # order_id = models.IntegerField(primary_key=True)
-    # customer_id = models.ForeignKey('Customer',on_delete=models.CASCADE,db_column='customer_id')
-    # product_id = models.ForeignKey('Product1',on_delete=models.CASCADE,db_column='product_id')
-    # quantity = models.IntegerField()
-    # price = models.IntegerField()
-    # orderDate = models.DateTimeField()
-    order_id = models.AutoField(primary_key=True)
-    customer_id = models.ForeignKey('Customer',on_delete=models.CASCADE,db_column='customer_id')
-    product_id = models.ForeignKey('Product1',on_delete=models.CASCADE,db_column='product_id')
-    quantity = models.IntegerField()
-    price = models.IntegerField()
-    orderDate = models.DateTimeField()
-
-    def __str__(self):
-        return f"Order {self.order_id}"

@@ -1,0 +1,3 @@
+docker exec nginx-base nginx -s reload
+sudo nano ~/default.conf
+docker cp ~/default.conf nginx-base:/etc/nginx/conf.d/

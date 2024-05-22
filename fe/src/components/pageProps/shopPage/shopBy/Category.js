@@ -8,25 +8,25 @@ const Category = () => {
   const items = [
     {
       _id: 990,
-      title: "New Arrivals",
+      title: "Giày",
       icons: true,
     },
     {
       _id: 991,
-      title: "Gudgets",
+      title: "Áo",
     },
     {
       _id: 992,
-      title: "Accessories",
+      title: "Quần",
       icons: true,
     },
     {
       _id: 993,
-      title: "Electronics",
+      title: "Mũ",
     },
     {
       _id: 994,
-      title: "Others",
+      title: "Cả set",
     },
   ];
   return (
@@ -37,17 +37,9 @@ const Category = () => {
           {items.map(({ _id, title, icons }) => (
             <li
               key={_id}
-              className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center justify-between"
+              className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center justify-between cursor-pointer hover:text-primeColor hover:border-gray-400 duration-300"
             >
               {title}
-              {icons && (
-                <span
-                  onClick={() => setShowSubCatOne(!showSubCatOne)}
-                  className="text-[10px] lg:text-xs cursor-pointer text-gray-400 hover:text-primeColor duration-300"
-                >
-                  <ImPlus />
-                </span>
-              )}
             </li>
           ))}
         </ul>
