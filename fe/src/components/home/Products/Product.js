@@ -9,6 +9,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
 import { toast } from "react-toastify";
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { toDate, getTimezoneOffset } from 'date-fns-tz';
+
+const date = new Date();
+const timeZone = 'Asia/Ho_Chi_Minh';
+const zonedDate = toDate(date, { timeZone });
+const offset = getTimezoneOffset(timeZone, zonedDate);
+const dateWithOffset = new Date(zonedDate.getTime() - offset);
 
 const Product = (props, {isAdmin}) => {
   const dispatch = useDispatch();
@@ -58,16 +66,23 @@ const Product = (props, {isAdmin}) => {
 
             <ul className="w-full h-full flex flex-col items-end justify-center gap-2 font-titleFont px-2 border-l border-r">
               <li
-                onClick={() =>
+                onClick={
+                  
+                  () =>
                   dispatch(
+                    
                     addToCart({
-                      _id: props._id,
-                      name: props.productName,
-                      quantity: 1,
-                      image: props.img,
-                      badge: props.badge,
-                      price: props.price,
-                      colors: props.color,
+                      // _id: props._id,
+                      // name: props.productName,
+                      // quantity: 1,
+                      // image: props.img,
+                      // badge: props.badge,
+                      // price: props.price,
+                      // colors: props.color,
+                      customerid :1,
+                      productid : 1,
+                      quantity : 1,
+                      date_added :  dateWithOffset.toISOString(),
                     })
                   )
                 }

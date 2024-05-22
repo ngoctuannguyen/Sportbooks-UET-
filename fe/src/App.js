@@ -25,7 +25,7 @@ import Shop from "./pages/Shop/Shop";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const isAdmin = true;
+const isAdmin = false;
 
 const Layout = () => {
   return (
