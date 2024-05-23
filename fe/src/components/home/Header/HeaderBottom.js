@@ -145,7 +145,6 @@ const HeaderBottom = (isAdmin) => {
                 <FaUser />
                 <FaCaretDown />
               </div>
-              {showUser && (
                 <motion.ul
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -169,7 +168,6 @@ const HeaderBottom = (isAdmin) => {
                     Others
                   </li>
                 </motion.ul>
-              )}
               <Link to="/cart">
                 <div className="relative">
                   <FaShoppingCart />

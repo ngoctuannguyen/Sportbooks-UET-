@@ -78,10 +78,11 @@ const router = createBrowserRouter(
         <Route path="/admin/cart" element={<Cart />}></Route>
         <Route path="/admin/paymentgateway" element={<Payment />}></Route>
       </Route>
+      <Route path="/admin/profile" element={<Profile isAdmin/>}></Route>
       <Route path="/signup" element={<SignUp />}></Route>
       <Route path="/signin" element={<SignIn />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
-    </Route>
+\    </Route>
   )
 );
 
