@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ImPlus } from "react-icons/im";
 import NavTitle from "./NavTitle";
 
-const Category = () => {
+const Category = ({setProductCategory}) => {
   const [showSubCatOne, setShowSubCatOne] = useState(false);
   const items = [
     {
@@ -37,6 +37,14 @@ const Category = () => {
           {items.map(({ _id, title, icons }) => (
             <li
               key={_id}
+              value={title}
+              onClick={() => {
+                if (title === "Cả set") {
+                  setProductCategory("");
+                } else {
+                  setProductCategory(title);
+                }
+              }}
               className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center justify-between cursor-pointer hover:text-primeColor hover:border-gray-400 duration-300"
             >
               {title}

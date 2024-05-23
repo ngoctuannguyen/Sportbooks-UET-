@@ -1,7 +1,7 @@
 import React from "react";
 import NavTitle from "./NavTitle";
 
-const Price = () => {
+const Price = ({setMinPrice, setMaxPrice}) => {
   const priceList = [
     {
       _id: 950,
@@ -26,7 +26,7 @@ const Price = () => {
     {
       _id: 954,
       priceOne: 1000,
-      priceTwo: 599.99,
+      priceTwo: 5999.99,
     },
   ];
   return (
@@ -34,12 +34,17 @@ const Price = () => {
       <NavTitle title="Shop by Price" icons={false} />
       <div className="font-titleFont">
         <ul className="flex flex-col gap-4 text-sm lg:text-base text-[#767676]">
-          {priceList.map((item) => (
+          {priceList.map(({_id, priceOne, priceTwo}) => (
             <li
-              key={item._id}
+              key={_id}
+              value={_id}
+              onClick={() => {
+                setMinPrice(priceOne);
+                setMaxPrice(priceTwo);
+              }}
               className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center gap-2 hover:text-primeColor hover:border-gray-400 duration-300"
             >
-              {item._id === 954 ? `> ${item.priceOne}k` : `${item.priceOne} - ${item.priceTwo}k`}
+              {_id === 954 ? `> ${priceOne}k` : `${priceOne} - ${priceTwo}k`}
             </li>
           ))}
         </ul>

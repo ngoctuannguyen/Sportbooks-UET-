@@ -24,7 +24,7 @@ const SignIn = () => {
     setErrPassword("");
   };
   // ============= Event Handler End here ===============
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     if (!email) {
@@ -36,9 +36,30 @@ const SignIn = () => {
     }
     // ============== Getting the value ==============
     if (email && password) {
-      setSuccessMsg(
-        `Hello dear, Thank you for your attempt. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
-      );
+      try {
+        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, {
+          method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              "email": email,
+              "password": password
+            }),
+            credentials: 'include' 
+        });
+        if (!res.ok) {
+          setSuccessMsg('Login failed');
+          throw new Error('Login failed');
+        }
+        // const data = await res.json();
+        // console.log(data);
+        setSuccessMsg(
+          `Hello dear, Thank you for your attempt. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
+        );
+      } catch (err) {
+        console.log(err);
+      }
       setEmail("");
       setPassword("");
     }
