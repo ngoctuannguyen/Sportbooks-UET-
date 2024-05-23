@@ -1,0 +1,182 @@
+.profile-container {
+    display: flex;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    width: 100vw;
+}
+
+.sidebar {
+    width: 20%;
+    height: 100%;
+    background-color: #f1f1f1;
+    padding: 20px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-info img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.user-info h2 {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    row-gap: 1rem;
+}
+
+.sidebar ul li {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    font-size: 1.1rem;
+    color: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+    padding: 10px; /* Thêm khoảng cách cho mục */
+    border-radius: 5px; /* Tùy chọn: thêm viền cong nếu muốn */
+}
+
+.sidebar ul li:hover {
+    color: #0c0885;
+    background-color: #e0e0e0; /* Chọn màu background bạn muốn */
+    border-radius: 5px; /* Tùy chọn: thêm viền cong nếu muốn */
+}
+
+.sidebar ul li.active {
+    font-weight: bold; /* Chữ đậm cho mục active */
+    background-color: #e0e0e0; /* Màu nền xám cho mục active */
+}
+
+.sidebar ul li:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.profile-form-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    width: 80%;
+}
+
+.form-header-container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-header-container h1 {
+    font-size: 2rem;
+}
+
+span {
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.form-content-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+form {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.form-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.form-field-label, .form-field-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-field-label {
+    flex: 1;
+    font-size: 1.3rem;
+    color: rgba(0, 0, 0, 0.7);
+    justify-content: space-between; /* Căn đều các phần tử bên trong */
+    display: flex;
+}
+
+.form-field-value {
+    flex: 2;
+    font-size: 1.3rem;
+    color: rgba(0, 0, 0, 0.7);
+    border: 1px solid black; /* Thêm viền đen với độ dày 1px */
+    display: flex; /* Sử dụng flex để căn đều các phần tử bên trong */
+    align-items: center; /* Căn giữa theo trục dọc */
+    justify-content: space-between; /* Căn đều các phần tử bên trong */
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.form-field-value div {
+    padding: 0.5rem; /* Thêm khoảng đệm cho div để nội dung không sát viền */
+}
+
+.form-field-value label {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+select {
+    -webkit-appearance: none; /* Ẩn giao diện mặc định trên Safari */
+    border: 1px solid #ccc; /* Viền của dropdown */
+    border-radius: 4px; /* Bo tròn các góc */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%23333333' d='M6 9l4-5H2l4 5z'/></svg>"); /* Thêm mũi tên dropdown */
+    background-repeat: no-repeat; /* Không lặp lại hình ảnh nền */
+    background-position: right 8px center; /* Đặt vị trí của mũi tên dropdown */
+    cursor: pointer; /* Biến con trỏ thành dấu tay khi di chuột */
+  }
+  
+  /* Đảm bảo rằng nội dung của dropdown có chiều rộng 100% */
+  select::-ms-expand {
+    display: none; /* Ẩn mũi tên dropdown trên IE10+ */
+  }
+  
+  /* Đảm bảo rằng nội dung của dropdown có chiều rộng 100% */
+  select option {
+    width: 100%;
+  }
+
+  .form-submit-btn {
+    margin-top: 2rem;
+    background-color: #000; /* Màu đen */
+    color: #fff; /* Màu chữ trắng */
+    font-weight: bold; /* Chữ in đậm */
+    font-size: 1.2rem; /* Kích thước chữ to lên */
+    padding: 5px 25px; /* Khoảng cách lề nút */
+    border: none; /* Loại bỏ viền */
+    border-radius: 5px; /* Bo góc */
+    cursor: pointer; /* Biến con trỏ thành dấu tay khi di chuột */
+  }
+  
+  .form-submit-btn:hover {
+    background-color: #333; /* Màu đen đậm khi di chuột vào */
+  }
+  
