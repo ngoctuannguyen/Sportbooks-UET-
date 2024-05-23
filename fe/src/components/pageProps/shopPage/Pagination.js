@@ -1,10 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import Product from "../../home/Products/Product";
 import { useSelector } from "react-redux";
-import { paginationItems } from "../../../constants";
-
-const items = paginationItems;
+import { usePaginationItems } from "../../../constants";
+import {
+  spfOne,
+  spfTwo,
+  spfThree,
+  spfFour,
+  bestSellerOne,
+  bestSellerTwo,
+  bestSellerThree,
+  bestSellerFour,
+  newArrOne,
+  newArrTwo,
+  newArrThree,
+  newArrFour,
+} from "../../../assets/images/index";
 
 function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
   // Filter items based on selected brands and categories
@@ -39,7 +51,9 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
   );
 }
 
-const Pagination = ({ itemsPerPage, isAdmin }) => {
+const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice }) => {
+  const paginationItems = usePaginationItems();
+  const [items, setItems] = useState([]);
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
 
@@ -60,6 +74,60 @@ const Pagination = ({ itemsPerPage, isAdmin }) => {
     setItemOffset(newOffset);
     setItemStart(newStart);
   };
+
+  useEffect(() => {
+    const product_search = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_search`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ "product_search": {
+            "name": productName,
+            "category": productCategory,
+            "min_price": minPrice,
+            "max_price": maxPrice
+          }}),
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const itemIds= paginationItems.map(item => item._id);
+        const filterData = data.filter(item => itemIds.includes(item.id));
+        const reDefineData = filterData.map(item => ({
+          _id: item.id,
+          img: spfOne,
+          productName: item.name,
+          price: item.price,
+          color: "Black",
+          badge: true,
+          des: item.desc,
+          productCategory: item.category,
+          productStars: item.stars,
+          dateCreated: item.date_created,
+          dateModified: item.date_modified,
+          productCount: item.product_count
+        }));
+        reDefineData.forEach(item => {
+          if (item.productCategory === "Giày") {
+            item.img = spfOne;
+          } else if (item.productCategory === "Áo") {
+            item.img = spfTwo;
+          } else if (item.productCategory === "Quần") {
+            item.img = spfThree;
+          } else if (item.productCategory === "Mũ") {
+            item.img = spfFour;
+          }
+        });
+        setItems(reDefineData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    product_search();
+  }, [paginationItems, productName, productCategory, minPrice, maxPrice]);
 
   return (
     <div>

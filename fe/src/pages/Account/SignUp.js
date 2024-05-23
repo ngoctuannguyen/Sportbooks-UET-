@@ -68,7 +68,7 @@ const SignUp = () => {
   };
   // ================= Email Validation End here ===============
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     if (checked) {
       if (!clientName) {
@@ -115,9 +115,35 @@ const SignUp = () => {
         country &&
         zip
       ) {
-        setSuccessMsg(
-          `Hello dear ${clientName}, Welcome you to OREBI Admin panel. We received your Sign up request. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
-        );
+        try {
+          const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/register`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: clientName,
+              email: email,
+              // phone: phone,
+              password: password,
+              // address: address,
+              // city: city,
+              // country: country,
+              // zip: zip,
+            }),
+          });
+          if (!res.ok) {
+            setSuccessMsg("Registration failed");
+            throw new Error("Registration failed");
+          }
+          const data = await res.json();
+          console.log(data);
+          setSuccessMsg(
+            `Hello dear ${clientName}, Welcome you to OREBI Admin panel. We received your Sign up request. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
+          );
+        } catch (err) {
+          console.log(err);
+        }
         setClientName("");
         setEmail("");
         setPhone("");
