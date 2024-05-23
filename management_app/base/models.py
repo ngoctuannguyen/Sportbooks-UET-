@@ -67,7 +67,7 @@ class Account(models.Model):
 
 # Connect to MongoDB
 class Product1(models.Model):
-    product_id = models.AutoField(primary_key=True)
+    product_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200, null=False, blank=False)
     category = models.CharField(max_length=100, null=False, blank=False,default='Shoes')
     price = models.DecimalField(max_digits=4, decimal_places=2)
@@ -82,10 +82,12 @@ class Product1(models.Model):
     
     def to_json(self):
         return {
-            # 'id': self.id,
+            'id': self.product_id,
             'name': self.name,
+            'category': self.category,
+            'stars': self.stars,
             'desc': self.description,
-            'price': self.price,
+            'price': float(str(self.price)) if self.price is not None else None,
             'date_created': self.date_created,
             'date_modified': self.date_modified,
             'product_count': self.product_count

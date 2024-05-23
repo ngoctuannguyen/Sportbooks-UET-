@@ -18,7 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required, permission_required
 from rest_framework_simplejwt import views as jwt_views
-
+import logging
+import pymongo
+logger = logging.getLogger(__name__)
+logger.debug("LOG_MSG_DEBUG")
+logger.info("LOG_MSG_INFO")
+logger.warn("LOG_MSG_WARN")
+logger.error("LOG_MSG_ERROR")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

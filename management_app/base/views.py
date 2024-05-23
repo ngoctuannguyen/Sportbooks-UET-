@@ -4,6 +4,12 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
+from rest_framework.views import APIView
+from rest_framework.exceptions import AuthenticationFailed
+from .serializers import UserSerializer
+from django.contrib.auth.models import User
+import jwt, datetime
 
 from email import *
 from django.db import connection
@@ -13,6 +19,178 @@ from .serializers import CartSerializer,UserSerializer,OrderSerializer
 from . models import Cart, Product1, User, Order
 
 connect_sql = connection.cursor()
+
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
+        user = User.objects.filter(email=email).first()
+        if user is None:
+            raise AuthenticationFailed('User not found!')
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect password!')
+        payload = {
+            'id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.utcnow()
+        }
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
+        response = Response()
+        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.data = {
+            'jwt': token
+        }
+        return response
+
+class UserView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        response.data = {
+            'message': 'success'
+        }
+        return response
+
+#api product
+@api_view(['GET'])
+def products(request):
+    api_urls = {
+        'List': '/product_list',
+        'Search': '/product_search',
+        'Detail': '/product_detail/<int:id>',
+        'Create': '/product_create',
+        'Update': '/product_update/<int:id>',
+        'Delete': '/product_delete/<int:id>',
+        'Inventory': '/product_inventory',
+    }
+    return Response(api_urls,status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def product_list(request):
+    products = Product1.objects.using('mongodb').all()
+    results = [product.to_json() for product in products]
+    return Response(results, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def product_search(request):
+    product_search = request.data.get('product_search', None)
+    products = Product1.objects.using('mongodb').all()
+    results = [product.to_json() for product in products]
+
+    if not product_search:
+        return Response(results, status=status.HTTP_200_OK)
+
+    product_name = product_search.get('name', None)
+    product_category = product_search.get('category', None)
+    min_price = product_search.get('min_price', None)
+    max_price = product_search.get('max_price', None)
+    filtered_results = []
+
+    for product in results:
+        if product_name and product_name.lower() not in product['name'].lower():
+            continue
+        if product_category and product_category.lower() != product['category'].lower():
+            continue
+        if min_price is not None and min_price != '' and product['price'] < float(min_price):
+            continue
+        if max_price is not None and max_price != '' and product['price'] > float(max_price):
+            continue
+        filtered_results.append(product)
+
+    return Response(filtered_results, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def product_detail(request, product_id):
+    try:
+        product = Product1.objects.using('mongodb').get(product_id=product_id)
+    except Product1.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    result = product.to_json()
+    return Response(result, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def product_create(request):
+    max_id = Product1.objects.using('mongodb').all().aggregate(Max('product_id'))['product_id__max']
+    next_id = max_id + 1 if max_id else 1
+
+    product = Product1(
+        product_id=next_id,
+        name=request.data.get('name'),
+        category=request.data.get('category'),
+        price=request.data.get('price'),
+        stars=request.data.get('stars'),
+        description=request.data.get('description'),
+        product_count=request.data.get('product_count'),
+    )
+    # {
+    #     "name": "Sample Product",
+    #     "category": "Shoes",
+    #     "price": 99.99,
+    #     "stars": 5,
+    #     "description": "This is a sample product.",
+    #     "product_count": 100
+    # }
+    product.save(using='mongodb')
+    return Response(product.to_json(), status=status.HTTP_201_CREATED)
+
+@api_view(['PUT'])
+def product_update(request, product_id):
+    try:
+        product = Product1.objects.using('mongodb').get(product_id=product_id)
+    except Product1.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    product.name = request.data.get('name', product.name)
+    product.category = request.data.get('category', product.category)
+    product.price = request.data.get('price', product.price)
+    product.stars = request.data.get('stars', product.stars)
+    product.description = request.data.get('description', product.description)
+    product.product_count = request.data.get('product_count', product.product_count)
+    product.save(using='mongodb')
+
+    return Response(product.to_json(), status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def product_delete(request, product_id):
+    try:
+        product = Product1.objects.using('mongodb').get(product_id=product_id)
+    except Product1.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    product.delete(using='mongodb')
+
+    return Response(status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def product_inventory(request):
+    products = Product1.objects.using('mongodb').filter(product_count__gt=0)
+    products_json = [product.to_json() for product in products]
+
+    return Response(products_json, status=status.HTTP_200_OK)
+
 
 
 @login_required(login_url='/admin/')

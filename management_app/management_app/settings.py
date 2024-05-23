@@ -28,6 +28,31 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['18.136.195.102', '127.0.0.1', '13.229.119.34', 'example.ml']
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mongolog': {
+            'level': 'DEBUG',
+            'class': 'mongolog.SimpleMongoLogHandler',
+            "connection": "mongodb://localhost:27017",
+            'collection': 'mongolog',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['mongolog'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    },
+}
+
 # HOST IPS
 INTERNAL_IPS = [
     '127.0.0.1',
@@ -52,6 +77,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     # 'django_rbac_permissions',
     'django_json_widget',
+    'corsheaders',
+    'mongolog',
 ]
 
 REST_FRAMEWORK = {
@@ -103,6 +130,8 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -117,9 +146,15 @@ MIDDLEWARE = [
     "django.middleware.cache.FetchFromCacheMiddleware",
 
 ]
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGIN = [
-    'http://localhost:8000'
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost:3000',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
 ]
 
 # STORAGES = {
@@ -175,10 +210,15 @@ DATABASES = {
         'PASSWORD': '12345678',
         'HOST': 'spb-db1.ct4q266m0rka.ap-southeast-1.rds.amazonaws.com',
         'PORT': 3306
-    }
-    # 'mongodb': {
-
-    # }
+    },
+    'mongodb': {
+        'ENGINE': 'djongo',
+        'NAME': 'management_app',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://management_app:lyk99lhp@cluster0.fozvhhq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+        },
+    },
 }
 
 # 
