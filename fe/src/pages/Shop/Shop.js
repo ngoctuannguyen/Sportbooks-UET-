@@ -24,7 +24,7 @@ const Shop = ({isAdmin}) => {
         </div>
         <div className="w-full mdl:w-[80%] lgl:w-[75%] h-full flex flex-col gap-10">
           
-        <div className="w-full">
+        <div className="w-full flex">
               <input value={productName} onChange={(e) => setProductName(e.target.value)} className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for products..." />
               <button className="w-1/5 h-10 bg-primeColor text-white rounded-md">Search</button>
             </div>
