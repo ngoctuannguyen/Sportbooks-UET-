@@ -50,6 +50,37 @@ urlpatterns = [
             views.product_inventory, 
             name='product_inventory'
       ),
+      # api customer
+      path(
+            'customers/customer_list',
+            views.customer_list,
+            name='customer_list'
+      ),
+      path(
+            'customers/customer_search', 
+            views.customer_search, 
+            name='customer_search'
+      ),
+      path(
+            'customers/customer_detail/<int:customer_id>',
+            views.customer_detail,
+            name='customer_detail'
+      ),
+      path(
+            'customers/customer_create', 
+            views.customer_create,
+            name='customer_create'
+      ),
+      path(
+            'customers/customer_update', 
+            views.customer_update, 
+            name='customer_update'
+      ),
+      path(
+            'customers/customer_delete/<int:customer_id>', 
+            views.customer_delete, 
+            name='customer_delete'
+      ),
     
     path(
         '', 

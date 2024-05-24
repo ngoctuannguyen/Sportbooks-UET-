@@ -92,7 +92,28 @@ class Product1(models.Model):
             'date_modified': self.date_modified,
             'product_count': self.product_count
         }
-    
+
+ # # Customers table
+class Customer(models.Model):
+    customer_id = models.IntegerField(primary_key=True)
+    customer_name = models.CharField(max_length=60, null=False)
+    customer_email = models.CharField(max_length=50)
+    customer_address = models.TextField()
+    customer_phonenumber = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.customer_name
+
+    def to_json(self):
+        return {
+            'id': self.customer_id,
+            'name': self.customer_name,
+            'email': self.customer_email,
+            'address': self.customer_address,
+            'phone': self.customer_phonenumber
+        }
+
+   
 # # Categories table
 class Categories(models.Model):
     id = models.AutoField(primary_key=True)
@@ -109,15 +130,6 @@ class Categories(models.Model):
 #     ### How about indexing
 
 # # Products table
-    
-    
-# # Customers table
-class Customer(models.Model):
-    customer_id = models.AutoField(primary_key=True)
-    customer_name = models.CharField(max_length=60, null=False)
-    customer_email = models.CharField(max_length=50)
-    customer_address = models.TextField()
-    cumstomer_phonenumber = models.CharField(max_length=15)
 
 # # Order table
 # class Order(models.Model):

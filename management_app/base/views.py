@@ -16,7 +16,7 @@ from django.db import connection
 
 from .serializers import CartSerializer,UserSerializer,OrderSerializer
 
-from . models import Cart, Product1, User, Order
+from . models import Cart, Product1, User, Order, Customer
 
 connect_sql = connection.cursor()
 
@@ -191,6 +191,85 @@ def product_inventory(request):
 
     return Response(products_json, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def customer_list(request):
+    customers = Customer.objects.using('mongodb').all()
+    results = [customer.to_json() for customer in customers]
+    return Response(results, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def customer_create(request):
+    max_id = Customer.objects.using('mongodb').all().aggregate(Max('customer_id'))['customer_id__max']
+    next_id = max_id + 1 if max_id else 1
+
+    customer = Customer(
+        customer_id=next_id,
+        customer_name=request.data.get('customer_name'),
+        customer_email=request.data.get('customer_email'),
+        customer_address=request.data.get('customer_address'),
+        customer_phonenumber=request.data.get('customer_phonenumber'),
+    )
+    customer.save(using='mongodb')
+    return Response(customer.to_json(), status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def customer_detail(request, customer_id):
+    try:
+        customer = Customer.objects.using('mongodb').get(customer_id=customer_id)
+    except Customer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    result = customer.to_json()
+    return Response(result, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def customer_update(request, customer_id):
+    customer_id = request.data.get("customer_id", None)
+    try:
+        customer = Customer.objects.using('mongodb').get(customer_id=customer_id)
+    except Customer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    customer.customer_name = request.data.get('customer_name', customer.customer_name)
+    customer.customer_email = request.data.get('customer_email', customer.customer_email)
+    customer.customer_address = request.data.get('customer_address', customer.customer_address)
+    customer.customer_phonenumber = request.data.get('customer_phonenumber', customer.customer_phonenumber)
+    customer.save(using='mongodb')
+
+    return Response(customer.to_json(), status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def customer_delete(request, customer_id):
+    try:
+        customer = Customer.objects.using('mongodb').get(customer_id=customer_id)
+    except Customer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    customer.delete(using='mongodb')
+
+    return Response(status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def customer_search(request):
+    customer_search = request.data.get('customer_search', None)
+    customers = Customer.objects.using('mongodb').all()
+    results = [customer.to_json() for customer in customers]
+
+    if not customer_search:
+        return Response(results, status=status.HTTP_200_OK)
+
+    customer_name = customer_search.get('customer_name', None)
+    customer_email = customer_search.get('customer_email', None)
+    customer_address = customer_search.get('customer_address', None)
+    customer_phonenumber = customer_search.get('customer_phonenumber', None)
+    filtered_results = []
+
+    for customer in results:
+        if customer_name and customer_name.lower() not in customer['customer_name'].lower():
+            continue
+        filtered_results.append(customer)
+
+    return Response(filtered_results, status=status.HTTP_200_OK)
 
 
 @login_required(login_url='/admin/')

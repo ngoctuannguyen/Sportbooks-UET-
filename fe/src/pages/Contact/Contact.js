@@ -69,65 +69,90 @@ const Contact = ({ isAdmin }) => {
   };
 
   // Create an array of user data
-  const users = [
-    {
-      id: 1,
-      name: "John Doe",
-      image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-      phone: "123456789",
-      email: "john.doe@example.com",
-      address: "123 Main St, New York, Vietnam UET",
-      membership: "Gold",
-    },
-    {
-      id: 4,
-      name: "Jane Smith",
-      image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-      phone: "987654321",
-      email: "mail@google.com",
-      address: "456 Main St, New York, Vietnam UET",
-      membership: "Gold",
-    },
-    {
-      id: 5,
-      name: "Jane Smith",
-      image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-      phone: "987654321",
-      email: "mail@google.com",
-      address: "456 Main St, New York, Vietnam UET",
-      membership: "Gold",
-    },
-    {
-      id: 6,
-      name: "Jane Smith",
-      image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-      phone: "987654321",
-      email: "mail@google.com",
-      address: "456 Main St, New York, Vietnam UET",
-      membership: "Gold",
-    },
-    {
-      id: 7,
-      name: "Jane Smith",
-      image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-      phone: "987654321",
-      email: "mail@google.com",
-      address: "456 Main St, New York, Vietnam UET",
-      membership: "Gold",
-    },
-    {
-      id: 8,
-      name: "Jane Smith",
-      image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-      phone: "987654321",
-      email: "mail@google.com",
-      address: "456 Main St, New York, Vietnam UET",
-      membership: "Gold",
-    },
+  // const users = [
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+  //     phone: "123456789",
+  //     email: "john.doe@example.com",
+  //     address: "123 Main St, New York, Vietnam UET",
+  //     membership: "Gold",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Jane Smith",
+  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+  //     phone: "987654321",
+  //     email: "mail@google.com",
+  //     address: "456 Main St, New York, Vietnam UET",
+  //     membership: "Gold",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Jane Smith",
+  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+  //     phone: "987654321",
+  //     email: "mail@google.com",
+  //     address: "456 Main St, New York, Vietnam UET",
+  //     membership: "Gold",
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Jane Smith",
+  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+  //     phone: "987654321",
+  //     email: "mail@google.com",
+  //     address: "456 Main St, New York, Vietnam UET",
+  //     membership: "Gold",
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Jane Smith",
+  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+  //     phone: "987654321",
+  //     email: "mail@google.com",
+  //     address: "456 Main St, New York, Vietnam UET",
+  //     membership: "Gold",
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "Jane Smith",
+  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+  //     phone: "987654321",
+  //     email: "mail@google.com",
+  //     address: "456 Main St, New York, Vietnam UET",
+  //     membership: "Gold",
+  //   },
 
 
 
-  ];
+  // ];
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/customers/customer_list`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const renamedData = data.map(item => ({
+          id: item.id,
+          name: item.name,
+          image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+          phone: item.phone,
+          email: item.email,
+          address: item.address,
+          membership: "Gold",
+        }));
+        setUsers(renamedData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUsers();
+  }, []);
   
   const options = {
     includeScore: true,
