@@ -82,7 +82,7 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<SignUp />}></Route>
       <Route path="/signin" element={<SignIn />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
-\    </Route>
+    </Route>
   )
 );
 

@@ -12,6 +12,8 @@ const Cart = () => {
   const products = useSelector((state) => state.orebiReducer.products);
   const [totalAmt, setTotalAmt] = useState("");
   const [shippingCharge, setShippingCharge] = useState("");
+  const total = totalAmt + shippingCharge;
+  const productNames = products.map((product) => product.name);
   useEffect(() => {
     let price = 0;
     products.map((item) => {
@@ -62,25 +64,30 @@ const Cart = () => {
                 <p className="flex items-center justify-between border-[1px] border-gray-400 border-b-0 py-1.5 text-lg px-4 font-medium">
                   Subtotal
                   <span className="font-semibold tracking-wide font-titleFont">
-                    ${totalAmt}
+                    {totalAmt}đ
                   </span>
                 </p>
                 <p className="flex items-center justify-between border-[1px] border-gray-400 border-b-0 py-1.5 text-lg px-4 font-medium">
                   Shipping Charge
                   <span className="font-semibold tracking-wide font-titleFont">
-                    ${shippingCharge}
+                    {shippingCharge}đ
                   </span>
                 </p>
                 <p className="flex items-center justify-between border-[1px] border-gray-400 py-1.5 text-lg px-4 font-medium">
                   Total
                   <span className="font-bold tracking-wide text-lg font-titleFont">
-                    ${totalAmt + shippingCharge}
+                    {totalAmt + shippingCharge}đ
                   </span>
                 </p>
               </div>
               <div className="flex justify-end">
-                <Link to="/paymentgateway">
-                  <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300">
+                <Link
+                  to={{
+                    pathname: "/paymentgateway",
+                    state: { total: total, productNames: productNames }
+                  }}
+                >
+                  <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300" onClick={console.log({total})}>
                     Proceed to Checkout
                   </button>
                 </Link>

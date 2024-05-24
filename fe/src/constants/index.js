@@ -96,8 +96,8 @@ export const navBarListAdmin = [
   },
   {
     _id: 1004,
-    title: "User",
-    link: "/admin/user",
+    title: "Admin",
+    link: "/admin/admin",
   },
   {
     _id: 1005,

@@ -562,6 +562,7 @@ const Journal = ({ isAdmin }) => {
                     <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
                       <option value="id">Mã vận đơn</option>
                       <option value="order_name" >Tên sản phẩm</option>
+                      <option value="sender_phone" >SĐT người gửi</option>
                     </select>
                   </div>
                   <div>
@@ -605,6 +606,11 @@ const Journal = ({ isAdmin }) => {
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
                         Tên sản phẩm</th>
+                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('sender_phone')}>
+                        {sortConfig && sortConfig.key === 'sender_phone' ? (
+                          sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
+                        ) : ''}
+                        SĐT người gửi</th>
                       <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('created_at')}>
                         {sortConfig && sortConfig.key === 'created_at' ? (
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
@@ -623,6 +629,7 @@ const Journal = ({ isAdmin }) => {
                         <tr key={item.id}>
                           <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.tracking_number}</td>
                           <td className="border border-gray-800 p-2 text-center">{item.order_name}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.sender_phone}</td>
                           <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.created_at}</td>
                           <td className="border border-gray-800 p-2 text-center">{item.status_text}</td>
                         </tr>

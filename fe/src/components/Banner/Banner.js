@@ -101,24 +101,24 @@ const Banner = () => {
   };
   return (
     <div className="w-full bg-white">
-      <Slider {...settings}>
-        <Link to="/offer">
-          <div>
-            <Image imgSrc={bannerImgOne} />
-          </div>
-        </Link>
-        <Link to="/offer">
-          <div>
-            <Image imgSrc={bannerImgTwo} />
-          </div>
-        </Link>
-        <Link to="/offer">
-          <div>
-            <Image imgSrc={bannerImgThree} />
-          </div>
-        </Link>
-      </Slider>
-    </div>
+  <Slider {...settings}>
+    <Link to="/offer">
+      <div className="w-full h-full">
+        <Image imgSrc={bannerImgOne} className="w-full h-full object-cover" />
+      </div>
+    </Link>
+    <Link to="/offer">
+      <div className="w-full h-full">
+        <Image imgSrc={bannerImgTwo} className="w-full h-full object-cover" />
+      </div>
+    </Link>
+    <Link to="/offer">
+      <div className="w-full h-full">
+        <Image imgSrc={bannerImgThree} className="w-full h-full object-cover" />
+      </div>
+    </Link>
+  </Slider>
+</div>
   );
 };
 

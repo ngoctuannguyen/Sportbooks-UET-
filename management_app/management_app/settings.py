@@ -28,30 +28,30 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['18.136.195.102', '127.0.0.1', '13.229.119.34', 'example.ml']
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'mongolog': {
-            'level': 'DEBUG',
-            'class': 'mongolog.SimpleMongoLogHandler',
-            "connection": "mongodb://localhost:27017",
-            'collection': 'mongolog',
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['mongolog'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'filters': {
+#         'require_debug_false': {
+#             '()': 'django.utils.log.RequireDebugFalse'
+#         }
+#     },
+#     'handlers': {
+#         'mongolog': {
+#             'level': 'DEBUG',
+#             'class': 'mongolog.SimpleMongoLogHandler',
+#             "connection": "mongodb://localhost:27017",
+#             'collection': 'mongolog',
+#         },
+#     },
+#     'loggers': {
+#         '': {
+#             'handlers': ['mongolog'],
+#             'level': 'DEBUG',
+#             'propagate': True
+#         },
+#     },
+# }
 
 # HOST IPS
 INTERNAL_IPS = [
