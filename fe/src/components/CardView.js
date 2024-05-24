@@ -1,6 +1,32 @@
 import React from 'react';
 
 const CardView = ({ image, name, id, phone, email, address, membership }) => {
+
+const handClickEdit = () => {
+    const edit = async () => {
+        try {
+            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/customers/customer_update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "customer_update": {
+                        "id": id,
+                        "name": name,
+                        "phone": phone,
+                        "email": email,
+                        "address": address,
+                        "membership": membership
+                    }
+                })
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+}
+
 return (
     <div className="border rounded-lg p-4">
         <img src={image} alt={name} className="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
@@ -13,7 +39,7 @@ return (
             <p className="truncate"><strong>Address:</strong> {address}</p>
         </div>
         <div className="mt-4 flex justify-between">
-            <button className="bg-yellow-500 text-xs hover:bg-yellow-700 text-white py-2 px-4 rounded">Edit</button>
+            <button onClick={handClickEdit()} className="bg-yellow-500 text-xs hover:bg-yellow-700 text-white py-2 px-4 rounded">Edit</button>
             <button className="bg-red-700 text-xs text-xshover:bg-red-900 text-white py-2 px-4 rounded">Delete</button>
         </div>
     </div>

@@ -26,7 +26,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "./pages/Account/Profile";
 
-const isAdmin = false;
+const isAdmin = true;
 
 const Layout = () => {
   return (
