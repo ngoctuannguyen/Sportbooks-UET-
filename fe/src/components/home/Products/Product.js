@@ -106,7 +106,7 @@ const Product = (props, { isAdmin }) => {
           <h2 onClick={handleProductDetails} className="hover:cursor-pointer text-lg text-primeColor font-bold overflow-hidden whitespace-nowrap -webkit-line-clamp-2 overflow-ellipsis">
             {props.productName}
           </h2>
-          <p className="text-[#767676] text-[14px]">${props.price}</p>
+          <p className="text-[#767676] text-[14px]">{props.price}đ</p>
         </div>
         <div>
           <p className="text-[#767676] text-[14px]">{props.color}</p>

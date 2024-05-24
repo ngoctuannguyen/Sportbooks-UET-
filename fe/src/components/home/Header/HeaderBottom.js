@@ -131,7 +131,7 @@ const HeaderBottom = (isAdmin) => {
                           <p className="text-sm">
                             Price:{" "}
                             <span className="text-primeColor font-semibold">
-                              ${item.price}
+                              {item.price}đ
                             </span>
                           </p>
                         </div>
