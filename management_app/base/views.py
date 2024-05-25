@@ -144,6 +144,7 @@ def product_create(request):
         stars=request.data.get('stars'),
         description=request.data.get('description'),
         product_count=request.data.get('product_count'),
+        url=request.data.get('url')
     )
     # {
     #     "name": "Sample Product",
@@ -169,6 +170,7 @@ def product_update(request, product_id):
     product.stars = request.data.get('stars', product.stars)
     product.description = request.data.get('description', product.description)
     product.product_count = request.data.get('product_count', product.product_count)
+    product.url = request.data.get('url', product.url)
     product.save(using='mongodb')
 
     return Response(product.to_json(), status=status.HTTP_200_OK)

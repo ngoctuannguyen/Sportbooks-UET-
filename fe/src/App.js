@@ -26,7 +26,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "./pages/Account/Profile";
 
-const isAdmin = true;
+const isAdmin = false;
 
 const Layout = () => {
   return (
@@ -71,7 +71,7 @@ const router = createBrowserRouter(
         <Route path="/admin" element={<Home isAdmin={isAdmin} />}></Route>
         <Route path="/admin/product" element={<Shop isAdmin/>}></Route>
         <Route path="/admin/about" element={<About />}></Route>
-        <Route path="/admin/user" element={<Contact isAdmin />}></Route>
+        <Route path="/admin/admin" element={<Contact isAdmin />}></Route>
         <Route path="/admin/order" element={<Journal isAdmin />}></Route>
         <Route path="/admin/category/:category" element={<Offer isAdmin />}></Route>
         <Route path="/admin/product/:_id" element={<ProductDetails isAdmin />}></Route>

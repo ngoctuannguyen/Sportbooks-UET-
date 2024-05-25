@@ -94,7 +94,7 @@ const ProductDetails = ({ isAdmin }) => {
           <div className="h-full xl:col-span-2">
             <img
               className="w-full h-full "
-              src={productInfo.img}
+              src={productInfo.productImages}
               alt={productInfo.img}
             />
           </div>

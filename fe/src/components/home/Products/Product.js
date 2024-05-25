@@ -50,7 +50,7 @@ const Product = (props, { isAdmin }) => {
     <div className="w-full relative group">
       <div className="max-w-80 max-h-80 relative overflow-y-hidden ">
         <div onClick={handleProductDetails}>
-          <Image className="w-full h-full" imgSrc={props.img} />
+          <Image className="w-full h-full" imgSrc={props.productImages} />
         </div>
         <div className="absolute top-6 left-8">
           {props.badge && <Badge text="New" />}
@@ -66,10 +66,11 @@ const Product = (props, { isAdmin }) => {
                       _id: props._id,
                       name: props.productName,
                       quantity: 1,
-                      image: props.img,
+                      image: props.productImages,
                       badge: props.badge,
                       price: props.price,
                       colors: props.color,
+                      count: props.productCount,
                     })
                   );
                   notify();
@@ -106,10 +107,10 @@ const Product = (props, { isAdmin }) => {
           <h2 onClick={handleProductDetails} className="hover:cursor-pointer text-lg text-primeColor font-bold overflow-hidden whitespace-nowrap -webkit-line-clamp-2 overflow-ellipsis">
             {props.productName}
           </h2>
-          <p className="text-[#767676] text-[14px]">{props.price}đ</p>
+          <p className="text-[#767676] text-[14px]">{props.price.toLocaleString()}đ</p>
         </div>
         <div>
-          <p className="text-[#767676] text-[14px]">{props.color}</p>
+          <p className="text-[#767676] text-[14px]">{props.productStars}⭐</p>
         </div>
       </div>
     </div>

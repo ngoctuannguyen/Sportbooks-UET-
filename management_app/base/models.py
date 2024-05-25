@@ -70,12 +70,13 @@ class Product1(models.Model):
     product_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200, null=False, blank=False)
     category = models.CharField(max_length=100, null=False, blank=False,default='Shoes')
-    price = models.DecimalField(max_digits=4, decimal_places=2)
-    stars = models.IntegerField()
+    price = models.IntegerField(null=False, blank=False)
+    stars = models.DecimalField(decimal_places=2, max_digits=3)
     description = models.TextField(null=True, blank=True)
+    url = models.TextField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
-    product_count = models.IntegerField()
+    product_count = models.IntegerField(null=False, blank=False, default=0)
 
     def __str__(self):
         return self.name
@@ -85,15 +86,14 @@ class Product1(models.Model):
             'id': self.product_id,
             'name': self.name,
             'category': self.category,
-            'stars': self.stars,
+            'stars': float(str(self.stars)) if self.stars else None,
             'desc': self.description,
-            'price': float(str(self.price)) if self.price is not None else None,
+            'url': self.url,
+            'price': self.price,
             'date_created': self.date_created,
             'date_modified': self.date_modified,
             'product_count': self.product_count
         }
-
- # # Customers table
 class Customer(models.Model):
     customer_id = models.IntegerField(primary_key=True)
     customer_name = models.CharField(max_length=60, null=False)

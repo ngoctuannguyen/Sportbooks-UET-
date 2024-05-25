@@ -7,6 +7,10 @@ const Category = ({setProductCategory}) => {
   const [showSubCatOne, setShowSubCatOne] = useState(false);
   const items = [
     {
+      _id: 995,
+      title: "Tất cả",
+    },
+    {
       _id: 990,
       title: "Giày",
       icons: true,

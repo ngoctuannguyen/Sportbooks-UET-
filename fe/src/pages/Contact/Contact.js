@@ -168,7 +168,7 @@ const Contact = ({ isAdmin }) => {
     const filteredCardviewData = results.map(result => result.item);
   
     setFilteredCardviewData(filteredCardviewData);
-    setCardviewData(filteredCardviewData); // Cập nhật cardviewData với dữ liệu đã lọc
+    setCardviewData(filteredCardviewData);
   };
 
   return (
@@ -177,7 +177,7 @@ const Contact = ({ isAdmin }) => {
         <>
           <div className="max-w-container mx-auto px-4">
             <Breadcrumbs title="Users" prevLocation={prevLocation} />
-            <div className="w-full pl-48 pr-48">
+            <div className="flex w-full pl-48 pr-48">
               <input className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for users..." />
               <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={handleSearch}>Search</button>
             </div>
