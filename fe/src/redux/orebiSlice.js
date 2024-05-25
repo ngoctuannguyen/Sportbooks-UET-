@@ -1,9 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAction } from '@reduxjs/toolkit';
 
 const initialState = {
   userInfo: [],
   products: [],
 };
+
+export const updateItemQuantity = createAction('orebi/updateItemQuantity');
 
 export const orebiSlice = createSlice({
   name: 'orebi',
@@ -46,6 +48,16 @@ export const orebiSlice = createSlice({
       state.products = [];
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(updateItemQuantity, (state, action) => {
+        const { id, quantity } = action.payload;
+        const item = state.products.find(item => item._id === id);
+        if (item) {
+          item.quantity = quantity;
+        }
+      });
+  },
 });
 
 export const {
@@ -55,4 +67,5 @@ export const {
   deleteItem,
   resetCart,
 } = orebiSlice.actions;
+
 export default orebiSlice.reducer;

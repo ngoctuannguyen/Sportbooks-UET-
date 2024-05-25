@@ -7,17 +7,20 @@ import {
   deleteItem,
   drecreaseQuantity,
   increaseQuantity,
+  updateItemQuantity,
 } from "../../redux/orebiSlice";
 
 const ItemCard = ({ item, updateTotalAmt }) => {
   const [quantity, setQuantity] = useState(item.quantity);
   const dispatch = useDispatch();
   const updateTotalPrice = (newQuantity) => {
-    if (isNaN(newQuantity) || newQuantity < 0) return;
-    if (newQuantity > item.count) {
+    const parsedQuantity = parseInt(newQuantity);
+    if (isNaN(parsedQuantity) || parsedQuantity < 0) return;
+    if (parsedQuantity > item.count) {
       toast.error('Vượt quá số lượng hàng trong kho.\n Số lượng tối đa được thêm là: ' + item.count);
     } else {
-      setQuantity(newQuantity);
+      setQuantity(parsedQuantity);
+      dispatch(updateItemQuantity({ id: item._id, quantity: parsedQuantity }));
     }
   };
   useEffect(() => {
@@ -42,7 +45,7 @@ const ItemCard = ({ item, updateTotalAmt }) => {
             type="number"
             value={quantity}
             onChange={(e) => updateTotalPrice(parseInt(e.target.value))}
-            className="w-20 h-8 text-center border-[1px] border-gray-400"
+            className="w-20 h-8 text-center border-[1px] border-gray-400 rounded-md"
             min={0}
           />
         </div>

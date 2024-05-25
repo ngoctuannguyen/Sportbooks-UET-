@@ -26,11 +26,11 @@ const Cart = () => {
     updateTotalAmt();
   }, [products]);
   useEffect(() => {
-    if (totalAmt <= 200) {
+    if (totalAmt <= 500000) {
       setShippingCharge(30000);
-    } else if (totalAmt <= 400) {
+    } else if (totalAmt <= 2000000) {
       setShippingCharge(25000);
-    } else if (totalAmt > 401) {
+    } else if (totalAmt > 2000000) {
       setShippingCharge(20000);
     }
   }, [totalAmt]);
