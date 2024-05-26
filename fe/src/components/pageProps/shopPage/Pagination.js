@@ -48,6 +48,7 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin, sear
             productCategory={item.productCategory}
             productStars={item.productStars}
             productImages={item.productImages}
+            productDesc={item.des}
           />
         </div>
       ))}
@@ -115,7 +116,8 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           dateModified: item.date_modified,
           productCount: item.product_count,
           productStars: item.stars,
-          productImages: item.url
+          productImages: item.url,
+          productDesc:item.description
         }));
         reDefineData.forEach(item => {
           if (item.productCategory === "Giày") {
