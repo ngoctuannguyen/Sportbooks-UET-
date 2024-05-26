@@ -15,12 +15,16 @@ const SpecialOffers = () => {
             <Product
               key={item._id}
               _id={item._id}
-              img={item.img}
+              img={item.productImages}
               productName={item.productName}
               price={item.price}
               color={item.color}
               badge={item.badge}
-              des={item.des}
+              pdf={item.pdf}
+              productCount={item.productCount}
+              productCategory={item.productCategory}
+              productStars={item.productStars}
+              productImages={item.productImages}
             />
           );
         })}

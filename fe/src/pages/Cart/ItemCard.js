@@ -38,13 +38,20 @@ const ItemCard = ({ item, updateTotalAmt }) => {
       </div>
       <div className="col-span-5 mdl:col-span-3 flex items-center justify-between py-4 mdl:py-0 px-4 mdl:px-0 gap-6 mdl:gap-0">
         <div className="flex w-1/3 items-center text-lg font-semibold">
-          {item.price}đ
+          {item.price.toLocaleString()}đ
         </div>
         <div className="w-1/3 flex items-center gap-6 text-lg">
           <input
             type="number"
             value={quantity}
-            onChange={(e) => updateTotalPrice(parseInt(e.target.value))}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "") {
+                updateTotalPrice(0); // or handle it as per your logic
+              } else {
+                updateTotalPrice(parseInt(value));
+              }
+            }}
             className="w-20 h-8 text-center border-[1px] border-gray-400 rounded-md"
             min={0}
           />

@@ -14,6 +14,7 @@ const Cart = () => {
   const [shippingCharge, setShippingCharge] = useState("");
   const total = totalAmt + shippingCharge;
   const productNames = products.map((product) => product.name);
+  const quantitys = products.map((product) => product.quantity);
   const updateTotalAmt = () => {
     let price = 0;
     products.forEach((item) => {
@@ -86,15 +87,14 @@ const Cart = () => {
               </div>
               <div className="flex justify-end">
                 <Link
-                  to={{
-                    pathname: "/paymentgateway",
-                    state: { total: total, productNames: productNames }
-                  }}
+                  to="/paymentgateway"
+                  state={{ total: total, productNames: productNames, quantitys: quantitys}}
                 >
-                  <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300" onClick={console.log({ total })}>
+                  <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300">
                     Proceed to Checkout
                   </button>
                 </Link>
+
               </div>
             </div>
           </div>

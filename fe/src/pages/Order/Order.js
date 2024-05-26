@@ -36,12 +36,12 @@ function StatusButton() {
 }
 
 const Journal = ({ isAdmin }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [prevLocation, setPrevLocation] = useState("");
-  useEffect(() => {
-    setPrevLocation(location.state.data);
-  }, [location]);
-  const navigate = useNavigate();
+  
+  const {clientName, email, messages, total, productNames, quantitys, idNumber} = location.state || {};
+  console.log(location.state)
 
   const [openReviewBill, setOpenReviewBill] = useState(false);
   const closeModalReviewBill = () => {
@@ -152,7 +152,6 @@ const Journal = ({ isAdmin }) => {
   const codNumber = Number(cod.replace(/,/g, ''));
   const surchargesNumber = Number(surcharges2.replace(/,/g, ''));
 
-  const total = isNaN(codNumber + surchargesNumber) ? 0 : codNumber + surchargesNumber;
 
 
   const [searchOption, setSearchOption] = useState('senderPhone');
