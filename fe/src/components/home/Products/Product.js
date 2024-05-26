@@ -58,9 +58,9 @@ const Product = (props, { isAdmin}) => {
 
   return (
     <div className="w-full relative group">
-      <div className="max-w-80 max-h-80 relative overflow-y-hidden ">
-        <div onClick={handleProductDetails}>
-          <Image className="w-full h-full" imgSrc={props.productImages} />
+      <div className="max-w-80 h-80 relative overflow-y-hidden ">
+        <div className="w-full h-full" onClick={handleProductDetails}>
+          <Image className="w-full h-full object-cover" imgSrc={props.productImages} />
         </div>
         <div className="absolute top-6 left-8">
           {props.badge && <Badge text="New" />}
