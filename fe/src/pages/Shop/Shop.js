@@ -28,7 +28,7 @@ const Shop = ({isAdmin}) => {
               <input value={productName} onChange={(e) => setProductName(e.target.value)} className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for products..." />
               <button className="w-1/5 h-10 bg-primeColor text-white rounded-md">Search</button>
             </div>
-          {isAdmin ? <Pagination isAdmin itemsPerPage={itemsPerPage} productName={productName} productCategory={productCategory} minPrice={minPrice} maxPrice={maxPrice} /> : <Pagination itemsPerPage={itemsPerPage} productName={productName} productCategory={productCategory} minPrice={minPrice} maxPrice={maxPrice} />}
+          {isAdmin ? <Pagination isAdmin itemsPerPage={itemsPerPage} searchTerm={productName} productName={productName} productCategory={productCategory} minPrice={minPrice} maxPrice={maxPrice} /> : <Pagination itemsPerPage={itemsPerPage} productName={productName} productCategory={productCategory} minPrice={minPrice} maxPrice={maxPrice} searchTerm={productName} />}
         </div>
       </div>
       {/* ================= Products End here ===================== */}

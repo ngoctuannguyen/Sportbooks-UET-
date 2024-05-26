@@ -38,7 +38,8 @@ export const usePaginationItems = () => {
           dateCreated: item.date_created,
           dateModified: item.date_modified,
           productCount: item.product_count,
-          productImages: item.url
+          productImages: item.url,
+          productDesc: item.description
         }));
         setProductList(renamedData);
         // console.log(productList);

@@ -25,6 +25,7 @@ const SpecialOffers = () => {
               productCategory={item.productCategory}
               productStars={item.productStars}
               productImages={item.productImages}
+              productDesc={item.des}
             />
           );
         })}

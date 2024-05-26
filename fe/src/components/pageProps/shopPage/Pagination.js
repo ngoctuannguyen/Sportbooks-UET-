@@ -3,7 +3,7 @@ import ReactPaginate from "react-paginate";
 import Product from "../../home/Products/Product";
 import { useSelector } from "react-redux";
 
-function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
+function Items({ currentItems, selectedBrands, selectedCategories, isAdmin, searchTerm }) {
   // Filter items based on selected brands and categories
   const filteredItems = currentItems.filter((item) => {
     const isBrandSelected =
@@ -21,7 +21,7 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
     <>
       {filteredItems.map((item) => (
         <div key={item._id} className="w-full">
-          <Product isAdmin = {isAdmin}
+          <Product isAdmin = {isAdmin} query={searchTerm}
             _id={item._id}
             img={item.productImages}
             productName={item.productName}
@@ -33,6 +33,7 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
             productCategory={item.productCategory}
             productStars={item.productStars}
             productImages={item.productImages}
+            productDesc={item.des}
           />
         </div>
       ))}
@@ -40,7 +41,8 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
   );
 }
 
-const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice }) => {
+const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice, searchTerm }) => {
+  const paginationItems = usePaginationItems();
   const [items, setItems] = useState([]);
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
@@ -95,13 +97,26 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           dateModified: item.date_modified,
           productCount: item.product_count,
           productStars: item.stars,
-          productImages: item.url
+          productImages: item.url,
+          productDesc:item.description
         }));
+        reDefineData.forEach(item => {
+          if (item.productCategory === "Giày") {
+            item.img = spfOne;
+          } else if (item.productCategory === "Áo") {
+            item.img = spfTwo;
+          } else if (item.productCategory === "Quần") {
+            item.img = spfThree;
+          } else if (item.productCategory === "Mũ") {
+            item.img = spfFour;
+          }
+        });
         setItems(reDefineData);
       } catch (error) {
         console.error(error);
       }
     };
+    console.log("product_search", searchTerm);
     product_search();
   }, [productName, productCategory, minPrice, maxPrice]);
 
@@ -113,6 +128,7 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           currentItems={currentItems}
           selectedBrands={selectedBrands}
           selectedCategories={selectedCategories}
+          searchTerm={searchTerm}
         />{" "}
       </div>
       ) : (
