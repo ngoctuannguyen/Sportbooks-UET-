@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { BsCheckCircleFill } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logoLight } from "../../assets/images";
 
-const SignIn = () => {
+const SignIn = ({isAdmin, setIsAdmin}) => {
+  const navigate = useNavigate();
   // ============= Initial State Start here =============
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,6 +58,8 @@ const SignIn = () => {
         setSuccessMsg(
           `Hello dear, Thank you for your attempt. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
         );
+        setIsAdmin(true);
+        navigate('/');
       } catch (err) {
         console.log(err);
       }

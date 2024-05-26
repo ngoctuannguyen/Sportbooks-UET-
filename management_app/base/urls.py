@@ -21,77 +21,69 @@ urlpatterns = [
             name='product_list'
       ),
       path(
+            'products/product_detail',
+            views.product_detail,
+            name='product_detail'
+      ),
+      path(
+            'products/product_delete', 
+            views.product_delete, 
+            name='product_delete'
+      ),
+      path(
+            'products/product_update', 
+            views.product_update, 
+            name='product_update'
+      ),
+      path(
             'products/product_search', 
             views.product_search, 
             name='product_search'
-      ),
-      path(
-            'products/product_detail/<int:product_id>',
-            views.product_detail,
-            name='product_detail'
       ),
       path(
             'products/product_create', 
             views.product_create,
             name='product_create'
       ),
+      # api admin
       path(
-            'products/product_update/<int:product_id>', 
-            views.product_update, 
-            name='product_update'
+            'admins', 
+            views.admins,
+            name='admins'
       ),
       path(
-            'products/product_delete/<int:product_id>', 
-            views.product_delete, 
-            name='product_delete'
+            'admins/admin_list',
+            views.admin_list,
+            name='admin_list'
       ),
       path(
-            'products/product_inventory', 
-            views.product_inventory, 
-            name='product_inventory'
-      ),
-      # api customer
-      path(
-            'customers/customer_list',
-            views.customer_list,
-            name='customer_list'
+            'admins/admin_detail',
+            views.admin_detail,
+            name='admin_detail'
       ),
       path(
-            'customers/customer_search', 
-            views.customer_search, 
-            name='customer_search'
+            'admins/admin_delete', 
+            views.admin_delete, 
+            name='admin_delete'
       ),
       path(
-            'customers/customer_detail/<int:customer_id>',
-            views.customer_detail,
-            name='customer_detail'
+            'admins/admin_update', 
+            views.admin_update, 
+            name='admin_update'
       ),
       path(
-            'customers/customer_create', 
-            views.customer_create,
-            name='customer_create'
+            'admins/admin_create', 
+            views.admin_create, 
+            name='admin_create'
       ),
       path(
-            'customers/customer_update', 
-            views.customer_update, 
-            name='customer_update'
+            'admins/admin_search', 
+            views.admin_search, 
+            name='admin_search'
       ),
-      path(
-            'customers/customer_delete/<int:customer_id>', 
-            views.customer_delete, 
-            name='customer_delete'
-      ),
+
+
     
-    path(
-        '', 
-        views.view_product_detail,
-        name='view_product_detail'
-    ),
-    path(
-        'books',
-        views.view_products,
-        name='home'
-    ),
     path(
         'cache',
         redis1.cached,

@@ -10,16 +10,18 @@ from rest_framework.exceptions import AuthenticationFailed
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
 import jwt, datetime
+from django.db import models
 
 from email import *
 from django.db import connection
 
 from .serializers import CartSerializer,UserSerializer,OrderSerializer
 
-from . models import Cart, Product1, User, Order, Customer
+from . models import Cart, Product1, User, Order, Admin
 
 connect_sql = connection.cursor()
 
+# api user
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -73,17 +75,16 @@ class LogoutView(APIView):
         }
         return response
 
-#api product
+# api product
 @api_view(['GET'])
 def products(request):
     api_urls = {
         'List': '/product_list',
+        'Detail': '/product_detail',
+        'Delete': '/product_delete',
+        'Update': '/product_update',
         'Search': '/product_search',
-        'Detail': '/product_detail/<int:id>',
         'Create': '/product_create',
-        'Update': '/product_update/<int:id>',
-        'Delete': '/product_delete/<int:id>',
-        'Inventory': '/product_inventory',
     }
     return Response(api_urls,status=status.HTTP_200_OK)
 
@@ -92,6 +93,65 @@ def product_list(request):
     products = Product1.objects.using('mongodb').all()
     results = [product.to_json() for product in products]
     return Response(results, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def product_detail(request):
+    product_id = request.data.get('product_id', None)
+    try:
+        product = Product1.objects.using('mongodb').get(product_id=product_id)
+    except Product1.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    result = product.to_json()
+    return Response(result, status=status.HTTP_200_OK)
+    # {
+    #     "product_id": 1
+    # }
+
+@api_view(['POST'])
+def product_delete(request):
+    product_id = request.data.get('product_id', None)
+    try:
+        product = Product1.objects.using('mongodb').get(product_id=product_id)
+    except Product1.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    product.delete(using='mongodb')
+
+    return Response(status=status.HTTP_200_OK)
+    # {
+    #     "product_id": 1
+    # }
+
+@api_view(['POST'])
+def product_update(request):
+    product_id = request.data.get('product_id', None)
+    try:
+        product = Product1.objects.using('mongodb').get(product_id=product_id)
+    except Product1.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    product.name = request.data.get('name', product.name)
+    product.category = request.data.get('category', product.category)
+    product.price = request.data.get('price', product.price)
+    product.stars = request.data.get('stars', product.stars)
+    product.description = request.data.get('desc', product.description)
+    product.url = request.data.get('url', product.url)
+    product.product_count = request.data.get('product_count', product.product_count)
+    product.date_modified = models.DateTimeField(auto_now=True, blank=True)
+    product.save(using='mongodb')
+
+    return Response(product.to_json(), status=status.HTTP_200_OK)
+    # {
+    #     "product_id": 1,
+    #     "name": "",
+    #     "category": "",
+    #     "price": 100.0,
+    #     "stars": 1,
+    #     "desc": "",
+    #     "product_count": 1,
+    #     "url": ""
+    # }
 
 @api_view(['POST'])
 def product_search(request):
@@ -120,16 +180,14 @@ def product_search(request):
         filtered_results.append(product)
 
     return Response(filtered_results, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def product_detail(request, product_id):
-    try:
-        product = Product1.objects.using('mongodb').get(product_id=product_id)
-    except Product1.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    result = product.to_json()
-    return Response(result, status=status.HTTP_200_OK)
+    # {
+    #     "product_search": {
+    #         "name": "",
+    #         "category": "",
+    #         "min_price": 0,
+    #         "max_price": 9000000
+    #     }
+    # }
 
 @api_view(['POST'])
 def product_create(request):
@@ -143,238 +201,138 @@ def product_create(request):
         price=request.data.get('price'),
         stars=request.data.get('stars'),
         description=request.data.get('description'),
+        url=request.data.get('url'),
         product_count=request.data.get('product_count'),
-        url=request.data.get('url')
     )
-    # {
-    #     "name": "Sample Product",
-    #     "category": "Shoes",
-    #     "price": 99.99,
-    #     "stars": 5,
-    #     "description": "This is a sample product.",
-    #     "product_count": 100
-    # }
+
     product.save(using='mongodb')
     return Response(product.to_json(), status=status.HTTP_201_CREATED)
+    # {
+    #     "name": "",
+    #     "category": "",
+    #     "price": 100000,
+    #     "stars": 4.5,
+    #     "description": "",
+    #     "url": "",
+    #     "product_count": 1
+    # }
 
-@api_view(['PUT'])
-def product_update(request, product_id):
-    try:
-        product = Product1.objects.using('mongodb').get(product_id=product_id)
-    except Product1.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    product.name = request.data.get('name', product.name)
-    product.category = request.data.get('category', product.category)
-    product.price = request.data.get('price', product.price)
-    product.stars = request.data.get('stars', product.stars)
-    product.description = request.data.get('description', product.description)
-    product.product_count = request.data.get('product_count', product.product_count)
-    product.url = request.data.get('url', product.url)
-    product.save(using='mongodb')
-
-    return Response(product.to_json(), status=status.HTTP_200_OK)
+# api admin
+@api_view(['GET'])
+def admins(request):
+    api_urls = {
+        'List': '/admin_list',
+        'Detail': '/admin_detail',
+        'Update': '/admin_update',
+        'Create': '/admin_create',
+        'Delete': '/admin_delete',
+        'Search': '/admin_search',
+    }
+    return Response(api_urls, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def product_delete(request, product_id):
-    try:
-        product = Product1.objects.using('mongodb').get(product_id=product_id)
-    except Product1.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    product.delete(using='mongodb')
-
-    return Response(status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def product_inventory(request):
-    products = Product1.objects.using('mongodb').filter(product_count__gt=0)
-    products_json = [product.to_json() for product in products]
-
-    return Response(products_json, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def customer_list(request):
-    customers = Customer.objects.using('mongodb').all()
-    results = [customer.to_json() for customer in customers]
+def admin_list(request):
+    admins = Admin.objects.using('mongodb').all()
+    results = [admin.to_json() for admin in admins]
     return Response(results, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-def customer_create(request):
-    max_id = Customer.objects.using('mongodb').all().aggregate(Max('customer_id'))['customer_id__max']
+def admin_detail(request):
+    admin_id = request.data.get('admin_id', None)
+    try:
+        admin = Admin.objects.using('mongodb').get(admin_id=admin_id)
+    except Admin.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    result = admin.to_json()
+    return Response(result, status=status.HTTP_200_OK)
+    # {
+    #     "admin_id": 1
+    # }
+
+@api_view(['POST'])
+def admin_update(request):
+    admin_id = request.data.get('admin_id', None)
+    try:
+        admin = Admin.objects.using('mongodb').get(admin_id=admin_id)
+    except Admin.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    admin.admin_username = request.data.get('username', admin.admin_username)
+    admin.admin_name = request.data.get('name', admin.admin_name)
+    admin.admin_email = request.data.get('email', admin.admin_email)
+    admin.admin_address = request.data.get('address', admin.admin_address)
+    admin.admin_phonenumber = request.data.get('phone', admin.admin_phonenumber)
+    admin.admin_gender = request.data.get('gender', admin.admin_gender)
+    admin.save(using='mongodb')
+
+    return Response(admin.to_json(), status=status.HTTP_200_OK)
+    # {
+    #     "admin_id": 1,
+    #     "username": "",
+    #     "name": "",
+    #     "email": "",
+    #     "address": "",
+    #     "phone": "",
+    #     "gender": ""
+    # }
+
+@api_view(['POST'])
+def admin_create(request):
+    max_id = Admin.objects.using('mongodb').all().aggregate(Max('admin_id'))['admin_id__max']
     next_id = max_id + 1 if max_id else 1
 
-    customer = Customer(
-        customer_id=next_id,
-        customer_name=request.data.get('customer_name'),
-        customer_email=request.data.get('customer_email'),
-        customer_address=request.data.get('customer_address'),
-        customer_phonenumber=request.data.get('customer_phonenumber'),
+    admin = Admin(
+        admin_id=next_id,
+        admin_username=request.data.get('username'),
+        admin_name=request.data.get('name'),
+        admin_email=request.data.get('email'),
+        admin_address=request.data.get('address'),
+        admin_phonenumber=request.data.get('phone'),
+        admin_gender=request.data.get('gender'),
     )
-    customer.save(using='mongodb')
-    return Response(customer.to_json(), status=status.HTTP_201_CREATED)
 
-@api_view(['GET'])
-def customer_detail(request, customer_id):
-    try:
-        customer = Customer.objects.using('mongodb').get(customer_id=customer_id)
-    except Customer.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    result = customer.to_json()
-    return Response(result, status=status.HTTP_200_OK)
+    admin.save(using='mongodb')
+    return Response(admin.to_json(), status=status.HTTP_201_CREATED)
+    # {
+    #     "username": "",
+    #     "name": "",
+    #     "email": "",
+    #     "address": "",
+    #     "phone": "",
+    #     "gender": ""
+    # }
 
 @api_view(['POST'])
-def customer_update(request, customer_id):
-    customer_id = request.data.get("customer_id", None)
+def admin_delete(request):
+    admin_id = request.data.get('admin_id', None)
     try:
-        customer = Customer.objects.using('mongodb').get(customer_id=customer_id)
-    except Customer.DoesNotExist:
+        admin = Admin.objects.using('mongodb').get(admin_id=admin_id)
+    except Admin.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    customer.customer_name = request.data.get('customer_name', customer.customer_name)
-    customer.customer_email = request.data.get('customer_email', customer.customer_email)
-    customer.customer_address = request.data.get('customer_address', customer.customer_address)
-    customer.customer_phonenumber = request.data.get('customer_phonenumber', customer.customer_phonenumber)
-    customer.save(using='mongodb')
-
-    return Response(customer.to_json(), status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def customer_delete(request, customer_id):
-    try:
-        customer = Customer.objects.using('mongodb').get(customer_id=customer_id)
-    except Customer.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    customer.delete(using='mongodb')
+    admin.delete(using='mongodb')
 
     return Response(status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def customer_search(request):
-    customer_search = request.data.get('customer_search', None)
-    customers = Customer.objects.using('mongodb').all()
-    results = [customer.to_json() for customer in customers]
-
-    if not customer_search:
-        return Response(results, status=status.HTTP_200_OK)
-
-    customer_name = customer_search.get('customer_name', None)
-    customer_email = customer_search.get('customer_email', None)
-    customer_address = customer_search.get('customer_address', None)
-    customer_phonenumber = customer_search.get('customer_phonenumber', None)
-    filtered_results = []
-
-    for customer in results:
-        if customer_name and customer_name.lower() not in customer['customer_name'].lower():
-            continue
-        filtered_results.append(customer)
-
-    return Response(filtered_results, status=status.HTTP_200_OK)
-
-
-@login_required(login_url='/admin/')
-@api_view(['GET'])
-# Create your views here.
-def view_product_detail(request):
-    api_urls = {
-        'List': '/product-list/',
-        'Detail View': '/product-detail/<int:id>',
-        'Create': '/product-create/',
-        'Update': '/product-update/<int:id>',
-        'Delete': '/product-detail/<int:id>'
-    }
-    return Response(api_urls,status=status.HTTP_200_OK)
-
-# @login_required(login_url='admin')
-@api_view(['GET'])
-def view_products(request):
-    products = Product1.objects.all()
-    results = [product.to_json() for product in products]
-    return Response(results, status=status.HTTP_201_CREATED)
-
-# def view_product(request):
-# # Tìm kiếm sản phẩm theo tên, danh mục, giá cả, v.v.
-# # Lọc sản phẩm theo thương hiệu, màu sắc, kích thước, v.v.
-
-
-# @api_view(['POST'])
-# Thêm sản phẩm mới.
-def view_insert_product(request, 
-                        name,
-                        category,
-                        price,
-                        star='',
-                        description='',
-                        date_created=''):
-    product = Product1(name, category, price, star, description, description, date_created)
-    product.save()
-    return Response(product.to_json, status=status.HTTP_201_CREATED)
+    # {
+    #     "admin_id": 1
+    # }
 
 @api_view(['POST'])
-def view_delete_product(request, name):
-    product = Product1.objects.get(name=name)
-    product.delete()
+def admin_search(request):
+    admin_name = request.data.get('name', None)
+    if not admin_name:
+        admins = Admin.objects.using('mongodb').all()
+        results = [admin.to_json() for admin in admins]
+        return Response(results, status=status.HTTP_200_OK)
+    admins = Admin.objects.using('mongodb').filter(admin_name__icontains=admin_name)
+    results = [admin.to_json() for admin in admins]
+    return Response(results, status=status.HTTP_200_OK)
+    # {
+    #     "name": ""
+    # }
 
-@api_view(['GET'])
-def view_remaining_product(request):
-    product = Product1.objects.raw('select * from ... \
-                                   where count > 0')
-    return Response(product.to_json(), status=status.HTTP_202_ACCEPTED)
-
-#giỏ hàng.
-@api_view(['GET', 'POST'])
-def cart_list(request):
-    if request.method == 'GET':
-        carts = Cart.objects.all()
-        serializer = CartSerializer(carts, many=True)
-        return Response(serializer.data)
-    
-    elif request.method == 'POST':
-        serializer = CartSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#user
-@api_view(['GET', 'POST'])
-def user_list(request):
-    if request.method == 'GET': # lấy danh sách tất cả người dùng
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST': #Tạo người dùng mới
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@login_required(login_url='/admin/')
-@api_view(['GET', 'PUT', 'DELETE'])
-def user_detail(request, pk):
-    try:
-        user = User.objects.get(pk=pk)
-    except User.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET': # Lấy thông tin 1 người dùng 
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT': # Cập nhập
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE': #xóa 
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+# api order
     
 @api_view(['GET'])
 def order_list(request):
@@ -424,123 +382,54 @@ def delete_order(request, pk):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# #USER 
-# from django.shortcuts import render, redirect
-# from .forms import RegisterForm
-# from .models import OtpToken
-# from django.contrib import messages
-# from django.contrib.auth import get_user_model
-# from django.utils import timezone
-# from django.core.mail import send_mail
-# from django.contrib.auth import authenticate, login, logout
-
-# def index(request):
-#     return render(request, "index.html")
-
-
-
-# def signup(request):
-#     form = RegisterForm()
-#     if request.method == 'POST':
-#         form = RegisterForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "Account created successfully! An OTP was sent to your Email")
-#             return redirect("verify-email", username=request.POST['username'])
-#     context = {"form": form}
-#     return render(request, "signup.html", context)
-
-
-
-# def verify_email(request, username):
-#     user = get_user_model().objects.get(username=username)
-#     user_otp = OtpToken.objects.filter(user=user).last()
+#giỏ hàng.
+@api_view(['GET', 'POST'])
+def cart_list(request):
+    if request.method == 'GET':
+        carts = Cart.objects.all()
+        serializer = CartSerializer(carts, many=True)
+        return Response(serializer.data)
     
-    
-#     if request.method == 'POST':
-#         # valid token
-#         if user_otp.otp_code == request.POST['otp_code']:
-            
-#             # checking for expired token
-#             if user_otp.otp_expires_at > timezone.now():
-#                 user.is_active=True
-#                 user.save()
-#                 messages.success(request, "Account activated successfully!! You can Login.")
-#                 return redirect("signin")
-            
-#             # expired token
-#             else:
-#                 messages.warning(request, "The OTP has expired, get a new OTP!")
-#                 return redirect("verify-email", username=user.username)
-        
-        
-#         # invalid otp code
-#         else:
-#             messages.warning(request, "Invalid OTP entered, enter a valid OTP!")
-#             return redirect("verify-email", username=user.username)
-        
-#     context = {}
-#     return render(request, "verify_token.html", context)
+    elif request.method == 'POST':
+        serializer = CartSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+#user
+@api_view(['GET', 'POST'])
+def user_list(request):
+    if request.method == 'GET': # lấy danh sách tất cả người dùng
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
+    elif request.method == 'POST': #Tạo người dùng mới
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def user_detail(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-# def resend_otp(request):
-#     if request.method == 'POST':
-#         user_email = request.POST["otp_email"]
-        
-#         if get_user_model().objects.filter(email=user_email).exists():
-#             user = get_user_model().objects.get(email=user_email)
-#             otp = OtpToken.objects.create(user=user, otp_expires_at=timezone.now() + timezone.timedelta(minutes=5))
-            
-            
-#             # email variables
-#             subject="Email Verification"
-#             message = f"""
-#                                 Hi {user.username}, here is your OTP {otp.otp_code} 
-#                                 it expires in 5 minute, use the url below to redirect back to the website
-#                                 http://127.0.0.1:8000/verify-email/{user.username}
-                                
-#                                 """
-#             sender = "clintonmatics@gmail.com"
-#             receiver = [user.email, ]
-        
-        
-#             # send email
-#             send_mail(
-#                     subject,
-#                     message,
-#                     sender,
-#                     receiver,
-#                     fail_silently=False,
-#                 )
-            
-#             messages.success(request, "A new OTP has been sent to your email-address")
-#             return redirect("verify-email", username=user.username)
+    if request.method == 'GET': # Lấy thông tin 1 người dùng 
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
-#         else:
-#             messages.warning(request, "This email dosen't exist in the database")
-#             return redirect("resend-otp")
-        
-           
-#     context = {}
-#     return render(request, "resend_otp.html", context)
+    elif request.method == 'PUT': # Cập nhập
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# def signin(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=username, password=password)
-        
-#         if user is not None:    
-#             login(request, user)
-#             messages.success(request, f"Hi {request.user.username}, you are now logged-in")
-#             return redirect("index")
-        
-#         else:
-#             messages.warning(request, "Invalid credentials")
-#             return redirect("signin")
-        
-#     return render(request, "login.html")
-    
+    elif request.method == 'DELETE': #xóa 
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
