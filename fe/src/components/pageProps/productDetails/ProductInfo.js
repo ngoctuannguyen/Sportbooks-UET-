@@ -15,6 +15,86 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
   };
   const dispatch = useDispatch();
 
+  // product update
+  const [productInfoToChange, setProductInfoToChange] = useState(
+    {
+      "product_id": 100,
+      "name": "a",
+      "category": "a",
+      "price": 100,
+      "stars": 4.5,
+      "desc": "a",
+      "product_count": 1,
+      "url": "a"
+    }
+  );
+  const changProductInfo = async () => {
+    try {
+      console.log(productInfoToChange);
+      console.log(productInfoToChange.id);
+      console.log(productInfoToChange.name);
+      console.log(productInfoToChange.category);
+      console.log(productInfoToChange.price);
+      console.log(productInfoToChange.stars);
+      console.log(productInfoToChange.desc);
+      console.log(productInfoToChange.product_count);
+      console.log(productInfoToChange.url);
+      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_update`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "product_id": productInfoToChange.product_id,
+            "name": productInfoToChange.name,
+            "category": productInfoToChange.category,
+            "price": productInfoToChange.price,
+            "stars": productInfoToChange.stars,
+            "desc": productInfoToChange.desc,
+            "product_count": productInfoToChange.product_count,
+            "url": productInfoToChange.url
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Update failed");
+      }
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // product delete
+  const [productInfoToDelete, setProductInfoToDelete] = useState(
+    {
+      "product_id": 34
+    }
+  );
+  const deleteProductInfo = async () => {
+    try {
+      console.log(productInfoToDelete);
+      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_delete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "product_id": productInfoToDelete.product_id
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Delete failed");
+      }
+      const data = await res.status();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     console.log(productInfo);
     setInitialProductInfo(productInfo);
@@ -28,6 +108,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
   const handleSaveClick = () => {
     setIsEditing(false);
     onSave(editedProductInfo);
+    changProductInfo();
   };
 
   const handleChange = (event) => {
@@ -44,6 +125,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
 
   const handleDeleteClick = () => {
     onDelete();
+    deleteProductInfo();
   };
 
   const renderDescription = () => {

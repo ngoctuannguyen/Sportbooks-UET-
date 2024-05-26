@@ -32,6 +32,7 @@ const Header = ({ isAdmin: initialIsAdmin }) => {
 
   const handleLogout = () => {
     // Your logout logic here
+    localStorage.removeItem("isAdmin");
     setIsAdmin(false);
     navigate("/signin");
   };

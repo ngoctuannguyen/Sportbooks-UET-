@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaRegUser, FaRegAddressCard } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -23,6 +23,87 @@ function Profile({ isAdmin }) {
     },
     avatar: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg", // placeholder for avatar image
   });
+
+  // admin profile
+  const [adminInfo, setAdminInfo] = useState(
+    {
+      username: 'admin1',
+    }
+  );
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_detail`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"admin_username": adminInfo.username}),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch user info');
+        }
+        const data = await response.json();
+        console.log(data);
+        setUserInfo({
+          username: data.username,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          gender: data.gender,
+          birthDate: {
+            day: '1',
+            month: '1',
+            year: '1990',
+          },
+          avatar: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg",
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
+
+  // admin update profile
+  const [adminInfoToUpdate, setAdminInfoToUpdate] = useState(
+    {
+      "username": "admin1",
+      "name": "",
+      "email": "",
+      "address": "",
+      "phone": "",
+      "gender": ""
+    }
+  );
+  const changeUserInfo = async () => {
+    console.log(adminInfoToUpdate);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "username": adminInfoToUpdate.username,
+          "name": adminInfoToUpdate.name,
+          "email": adminInfoToUpdate.email,
+          "address": adminInfoToUpdate.address,
+          "phone": userInfo.phone,
+          "gender": userInfo.gender
+      }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update user info');
+      }
+      const data = await response.json();
+      console.log(data);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  };
 
   const [selectedTab, setSelectedTab] = useState('profile');
 
@@ -298,7 +379,7 @@ function Profile({ isAdmin }) {
                     <Col span={12} className='form-field-label'>
                     </Col>
                     <Col span={12}>
-                      <button type="submit" className='form-submit-btn'>Lưu</button>
+                      <button type="submit" onClick={() => changeUserInfo()} className='form-submit-btn'>Lưu</button>
                     </Col>
                   </Row>
                 </form>

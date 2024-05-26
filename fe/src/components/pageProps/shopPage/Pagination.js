@@ -2,21 +2,6 @@ import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import Product from "../../home/Products/Product";
 import { useSelector } from "react-redux";
-import { usePaginationItems } from "../../../constants";
-import {
-  spfOne,
-  spfTwo,
-  spfThree,
-  spfFour,
-  bestSellerOne,
-  bestSellerTwo,
-  bestSellerThree,
-  bestSellerFour,
-  newArrOne,
-  newArrTwo,
-  newArrThree,
-  newArrFour,
-} from "../../../assets/images/index";
 
 function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
   // Filter items based on selected brands and categories
@@ -56,7 +41,6 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
 }
 
 const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice }) => {
-  const paginationItems = usePaginationItems();
   const [items, setItems] = useState([]);
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
@@ -81,7 +65,6 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
 
   useEffect(() => {
     const product_search = async () => {
-      console.log(paginationItems)
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_search`, {
           method: "POST",
@@ -99,11 +82,8 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
-        const itemIds= paginationItems.map(item => item._id);
-        const filterData = data.filter(item => itemIds.includes(item.id));
-        const reDefineData = filterData.map(item => ({
+        const reDefineData = data.map(item => ({
           _id: item.id,
-          img: spfOne,
           productName: item.name,
           price: item.price,
           color: "Black",
@@ -117,27 +97,17 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           productStars: item.stars,
           productImages: item.url
         }));
-        reDefineData.forEach(item => {
-          if (item.productCategory === "Giày") {
-            item.img = spfOne;
-          } else if (item.productCategory === "Áo") {
-            item.img = spfTwo;
-          } else if (item.productCategory === "Quần") {
-            item.img = spfThree;
-          } else if (item.productCategory === "Mũ") {
-            item.img = spfFour;
-          }
-        });
         setItems(reDefineData);
       } catch (error) {
         console.error(error);
       }
     };
     product_search();
-  }, [paginationItems, productName, productCategory, minPrice, maxPrice]);
+  }, [productName, productCategory, minPrice, maxPrice]);
 
   return (
     <div>
+      {items.length > 0 ? (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mdl:gap-4 lg:gap-10">
         <Items isAdmin={isAdmin}
           currentItems={currentItems}
@@ -145,6 +115,9 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           selectedCategories={selectedCategories}
         />{" "}
       </div>
+      ) : (
+        <div className="gap-10 mdl:gap-4 lg:gap-10"><span>Phân loại {productCategory ? productCategory : "Tất cả"} trong khoảng giá {minPrice || maxPrice ? (minPrice === 1000000 ? `> ${minPrice/1000} k` : `${minPrice/1000} - ${maxPrice/1000} k`) : "bất kì"} không có sản phẩm nào phù hợp</span></div>
+      )}
       <div className="flex flex-col mdl:flex-row justify-center mdl:justify-between items-center">
         <ReactPaginate
           nextLabel=""

@@ -43,7 +43,7 @@ const Category = ({setProductCategory}) => {
               key={_id}
               value={title}
               onClick={() => {
-                if (title === "Cả set") {
+                if (title === "Tất cả") {
                   setProductCategory("");
                 } else {
                   setProductCategory(title);

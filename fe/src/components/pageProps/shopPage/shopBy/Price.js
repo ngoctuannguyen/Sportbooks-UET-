@@ -26,12 +26,12 @@ const Price = ({ setMinPrice, setMaxPrice }) => {
     {
       _id: 954,
       priceOne: 1000,
-      priceTwo: 5999.99,
+      priceTwo: 10000,
     },
     {
       _id: 955,
       priceOne: 6000,
-      priceTwo: 10000,
+      priceTwo: 100000,
     }
   ];
   return (
@@ -43,10 +43,14 @@ const Price = ({ setMinPrice, setMaxPrice }) => {
             <li
               key={_id}
               value={_id}
-              onClick={() => {
-                setMinPrice(priceOne);
-                setMaxPrice(priceTwo);
-              }}
+              onClick={(e) => {
+                if (e.target.value === 955) {
+                  setMinPrice(null);
+                  setMaxPrice(null)
+                } else {
+                setMinPrice(priceOne*1000);
+                setMaxPrice(priceTwo*1000);
+              }}}
               className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center gap-2 hover:text-primeColor hover:border-gray-400 duration-300"
             >
               {_id === 955 ? 'Tất cả' : (_id === 954 ? `> ${priceOne}k` : `${priceOne} - ${priceTwo}k`)}            </li>

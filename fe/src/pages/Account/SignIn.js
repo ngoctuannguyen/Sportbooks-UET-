@@ -58,6 +58,7 @@ const SignIn = ({isAdmin, setIsAdmin}) => {
         setSuccessMsg(
           `Hello dear, Thank you for your attempt. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
         );
+        localStorage.setItem("isAdmin", true)
         setIsAdmin(true);
         navigate('/');
       } catch (err) {

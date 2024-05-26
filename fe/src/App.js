@@ -28,7 +28,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Profile from "./pages/Account/Profile";
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") || false);
   // const isAdmin = true;
   const Layout = () => {
     return (

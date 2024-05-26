@@ -146,8 +146,8 @@ def product_update(request):
     #     "product_id": 1,
     #     "name": "",
     #     "category": "",
-    #     "price": 100.0,
-    #     "stars": 1,
+    #     "price": 100,
+    #     "stars": 4.5,
     #     "desc": "",
     #     "product_count": 1,
     #     "url": ""
@@ -238,23 +238,23 @@ def admin_list(request):
 
 @api_view(['POST'])
 def admin_detail(request):
-    admin_id = request.data.get('admin_id', None)
+    admin_username = request.data.get('admin_username', None)
     try:
-        admin = Admin.objects.using('mongodb').get(admin_id=admin_id)
+        admin = Admin.objects.using('mongodb').get(admin_username=admin_username)
     except Admin.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     result = admin.to_json()
     return Response(result, status=status.HTTP_200_OK)
     # {
-    #     "admin_id": 1
+    #     "admin_username": 1
     # }
 
 @api_view(['POST'])
 def admin_update(request):
-    admin_id = request.data.get('admin_id', None)
+    admin_username = request.data.get('username', None)
     try:
-        admin = Admin.objects.using('mongodb').get(admin_id=admin_id)
+        admin = Admin.objects.using('mongodb').get(admin_username=admin_username)
     except Admin.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -268,7 +268,6 @@ def admin_update(request):
 
     return Response(admin.to_json(), status=status.HTTP_200_OK)
     # {
-    #     "admin_id": 1,
     #     "username": "",
     #     "name": "",
     #     "email": "",
@@ -305,9 +304,9 @@ def admin_create(request):
 
 @api_view(['POST'])
 def admin_delete(request):
-    admin_id = request.data.get('admin_id', None)
+    admin_username = request.data.get('admin_username', None)
     try:
-        admin = Admin.objects.using('mongodb').get(admin_id=admin_id)
+        admin = Admin.objects.using('mongodb').get(admin_username=admin_username)
     except Admin.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -315,7 +314,7 @@ def admin_delete(request):
 
     return Response(status=status.HTTP_200_OK)
     # {
-    #     "admin_id": 1
+    #     "admin_username": 1
     # }
 
 @api_view(['POST'])

@@ -128,11 +128,18 @@ const Contact = ({ isAdmin }) => {
 
 
   // ];
+  const [searchName, setSearchName] = useState("");
   const [users, setUsers] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/customers/customer_list`);
+        const response = await fetch (`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_search`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({name: searchName}),
+        });
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
@@ -144,7 +151,7 @@ const Contact = ({ isAdmin }) => {
           phone: item.phone,
           email: item.email,
           address: item.address,
-          membership: "Gold",
+          membership: item.gender,
         }));
         setUsers(renamedData);
       } catch (error) {
@@ -152,7 +159,7 @@ const Contact = ({ isAdmin }) => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [searchName]);
   
   const options = {
     includeScore: true,
@@ -178,8 +185,8 @@ const Contact = ({ isAdmin }) => {
           <div className="max-w-container mx-auto px-4">
             <Breadcrumbs title="Users" prevLocation={prevLocation} />
             <div className="flex w-full pl-48 pr-48">
-              <input className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for users..." />
-              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={(e) => handleSearch()}>Search</button>
+              <input value={searchName} onChange={(e) => setSearchName(e.target.value)} className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for users..." />
+              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md">Search</button>
             </div>
             {/* Display the card views */}
             <div className="grid grid-cols-6 gap-4 mt-16">
