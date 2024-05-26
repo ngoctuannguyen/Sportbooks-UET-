@@ -140,7 +140,7 @@ const Contact = ({ isAdmin }) => {
         const renamedData = data.map(item => ({
           id: item.id,
           name: item.name,
-          image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
+          image: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg",
           phone: item.phone,
           email: item.email,
           address: item.address,
@@ -160,16 +160,33 @@ const Contact = ({ isAdmin }) => {
   }
 
   const fuse = new Fuse(users, options);
-  const handleSearch = (e) => {
-    const searchQuery = e.target.value;
-  
-    const results = fuse.search(searchQuery);
-  
-    const filteredCardviewData = results.map(result => result.item);
-  
-    setFilteredCardviewData(filteredCardviewData);
-    setCardviewData(filteredCardviewData); // Cập nhật cardviewData với dữ liệu đã lọc
-  };
+  const [searchQuery, setSearchQuery] = useState('');
+  useEffect(() => {
+    const searchResult = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/customers/customer_search`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ "customer_search": {
+            "customer_name": searchQuery,
+          }}),
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        } 
+        const data = await response.json();
+        const userId = users.map(user => user.id);
+        const filterData = userId.filter(user => data.includes(user.id));
+        console.log(filterData);
+        // setUsers(filterData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    searchResult();
+  }, [users, searchQuery]);
 
   return (
     <>
@@ -177,9 +194,9 @@ const Contact = ({ isAdmin }) => {
         <>
           <div className="max-w-container mx-auto px-4">
             <Breadcrumbs title="Users" prevLocation={prevLocation} />
-            <div className="w-full pl-48 pr-48">
+            <div className="w-full flex pl-48 pr-48">
               <input className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for users..." />
-              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={handleSearch}>Search</button>
+              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={(e) => setSearchQuery(e.target.value)}>Search</button>
             </div>
             {/* Display the card views */}
             <div className="grid grid-cols-6 gap-4 mt-16">
