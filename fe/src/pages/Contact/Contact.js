@@ -68,66 +68,6 @@ const Contact = ({ isAdmin }) => {
     }
   };
 
-  // Create an array of user data
-  // const users = [
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-  //     phone: "123456789",
-  //     email: "john.doe@example.com",
-  //     address: "123 Main St, New York, Vietnam UET",
-  //     membership: "Gold",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Jane Smith",
-  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-  //     phone: "987654321",
-  //     email: "mail@google.com",
-  //     address: "456 Main St, New York, Vietnam UET",
-  //     membership: "Gold",
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Jane Smith",
-  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-  //     phone: "987654321",
-  //     email: "mail@google.com",
-  //     address: "456 Main St, New York, Vietnam UET",
-  //     membership: "Gold",
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Jane Smith",
-  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-  //     phone: "987654321",
-  //     email: "mail@google.com",
-  //     address: "456 Main St, New York, Vietnam UET",
-  //     membership: "Gold",
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "Jane Smith",
-  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-  //     phone: "987654321",
-  //     email: "mail@google.com",
-  //     address: "456 Main St, New York, Vietnam UET",
-  //     membership: "Gold",
-  //   },
-  //   {
-  //     id: 8,
-  //     name: "Jane Smith",
-  //     image: "https://cafefcdn.com/thumb_w/640/203337114487263232/2022/3/3/photo1646280815645-1646280816151764748403.jpg",
-  //     phone: "987654321",
-  //     email: "mail@google.com",
-  //     address: "456 Main St, New York, Vietnam UET",
-  //     membership: "Gold",
-  //   },
-
-
-
-  // ];
   const [searchName, setSearchName] = useState("");
   const [users, setUsers] = useState([]);
   useEffect(() => {
@@ -177,6 +117,29 @@ const Contact = ({ isAdmin }) => {
     setFilteredCardviewData(filteredCardviewData);
   };
 
+  const handleDelete = async (id) => {
+    try {
+      console.log(id);
+      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "admin_id": id
+        }),
+      }
+      );
+      if (!res.ok) {
+        throw new Error("Delete failed");
+      }
+      const data = await res.status();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       {isAdmin ? (
@@ -200,6 +163,7 @@ const Contact = ({ isAdmin }) => {
                   address={user.address}
                   membership={user.membership}
                   searchQuery={searchName}
+                  onDelete={handleDelete}
                 />
               ))}
             </div>
