@@ -135,6 +135,7 @@ const Header = ({ isAdmin: initialIsAdmin }) => {
                             transition={{ duration: 0.4 }}
                             className="text-sm flex flex-col gap-1"
                           >
+                            <li className="headerSedenavLi">Tất cả</li>
                             <li className="headerSedenavLi">Giày</li>
                             <li className="headerSedenavLi">Áo</li>
                             <li className="headerSedenavLi">Mũ</li>

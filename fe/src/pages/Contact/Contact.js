@@ -160,33 +160,16 @@ const Contact = ({ isAdmin }) => {
   }
 
   const fuse = new Fuse(users, options);
-  const [searchQuery, setSearchQuery] = useState('');
-  useEffect(() => {
-    const searchResult = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/customers/customer_search`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ "customer_search": {
-            "customer_name": searchQuery,
-          }}),
-        });
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        } 
-        const data = await response.json();
-        const userId = users.map(user => user.id);
-        const filterData = userId.filter(user => data.includes(user.id));
-        console.log(filterData);
-        // setUsers(filterData);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    searchResult();
-  }, [users, searchQuery]);
+  const handleSearch = (e) => {
+    const searchQuery = e.target.value;
+  
+    const results = fuse.search(searchQuery);
+  
+    const filteredCardviewData = results.map(result => result.item);
+  
+    setFilteredCardviewData(filteredCardviewData);
+    setCardviewData(filteredCardviewData);
+  };
 
   return (
     <>
@@ -194,7 +177,7 @@ const Contact = ({ isAdmin }) => {
         <>
           <div className="max-w-container mx-auto px-4">
             <Breadcrumbs title="Users" prevLocation={prevLocation} />
-            <div className="w-full flex pl-48 pr-48">
+            <div className="flex w-full pl-48 pr-48">
               <input className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for users..." />
               <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={(e) => setSearchQuery(e.target.value)}>Search</button>
             </div>

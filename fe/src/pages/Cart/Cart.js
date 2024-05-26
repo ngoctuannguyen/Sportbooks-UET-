@@ -14,23 +14,27 @@ const Cart = () => {
   const [shippingCharge, setShippingCharge] = useState("");
   const total = totalAmt + shippingCharge;
   const productNames = products.map((product) => product.name);
-  useEffect(() => {
+  const updateTotalAmt = () => {
     let price = 0;
-    products.map((item) => {
+    products.forEach((item) => {
       price += item.price * item.quantity;
-      return price;
     });
     setTotalAmt(price);
+  };
+
+  useEffect(() => {
+    updateTotalAmt();
   }, [products]);
   useEffect(() => {
-    if (totalAmt <= 200) {
-      setShippingCharge(30);
-    } else if (totalAmt <= 400) {
-      setShippingCharge(25);
-    } else if (totalAmt > 401) {
-      setShippingCharge(20);
+    if (totalAmt <= 500000) {
+      setShippingCharge(30000);
+    } else if (totalAmt <= 2000000) {
+      setShippingCharge(25000);
+    } else if (totalAmt > 2000000) {
+      setShippingCharge(20000);
     }
   }, [totalAmt]);
+
   return (
     <div className="max-w-container mx-auto px-4">
       <Breadcrumbs title="Cart" />
@@ -45,7 +49,7 @@ const Cart = () => {
           <div className="mt-5">
             {products.map((item) => (
               <div key={item._id}>
-                <ItemCard item={item} />
+                <ItemCard item={item} updateTotalAmt={updateTotalAmt} />
               </div>
             ))}
           </div>
@@ -64,19 +68,19 @@ const Cart = () => {
                 <p className="flex items-center justify-between border-[1px] border-gray-400 border-b-0 py-1.5 text-lg px-4 font-medium">
                   Subtotal
                   <span className="font-semibold tracking-wide font-titleFont">
-                    {totalAmt}đ
+                    {totalAmt.toLocaleString()}đ
                   </span>
                 </p>
                 <p className="flex items-center justify-between border-[1px] border-gray-400 border-b-0 py-1.5 text-lg px-4 font-medium">
                   Shipping Charge
                   <span className="font-semibold tracking-wide font-titleFont">
-                    {shippingCharge}đ
+                    {shippingCharge.toLocaleString()}đ
                   </span>
                 </p>
                 <p className="flex items-center justify-between border-[1px] border-gray-400 py-1.5 text-lg px-4 font-medium">
                   Total
                   <span className="font-bold tracking-wide text-lg font-titleFont">
-                    {totalAmt + shippingCharge}đ
+                    {(totalAmt + shippingCharge).toLocaleString()}đ
                   </span>
                 </p>
               </div>
@@ -87,7 +91,7 @@ const Cart = () => {
                     state: { total: total, productNames: productNames }
                   }}
                 >
-                  <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300" onClick={console.log({total})}>
+                  <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300" onClick={console.log({ total })}>
                     Proceed to Checkout
                   </button>
                 </Link>

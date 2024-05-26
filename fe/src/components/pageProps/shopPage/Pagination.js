@@ -38,12 +38,16 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
         <div key={item._id} className="w-full">
           <Product isAdmin = {isAdmin}
             _id={item._id}
-            img={item.img}
+            img={item.productImages}
             productName={item.productName}
             price={item.price}
             color={item.color}
             badge={item.badge}
             pdf={item.pdf}
+            productCount={item.productCount}
+            productCategory={item.productCategory}
+            productStars={item.productStars}
+            productImages={item.productImages}
           />
         </div>
       ))}
@@ -77,6 +81,7 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
 
   useEffect(() => {
     const product_search = async () => {
+      console.log(paginationItems)
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_search`, {
           method: "POST",
@@ -108,7 +113,9 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           productStars: item.stars,
           dateCreated: item.date_created,
           dateModified: item.date_modified,
-          productCount: item.product_count
+          productCount: item.product_count,
+          productStars: item.stars,
+          productImages: item.url
         }));
         reDefineData.forEach(item => {
           if (item.productCategory === "Giày") {

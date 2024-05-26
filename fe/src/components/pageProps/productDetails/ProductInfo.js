@@ -16,6 +16,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(productInfo);
     setInitialProductInfo(productInfo);
   }, [productInfo]);
 
@@ -61,6 +62,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
     return <>{description}</>;
   };
 
+  console.log(productInfo);
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-4xl font-semibold">
@@ -105,7 +107,18 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
           renderDescription()
         )}
       </p>
-
+      <p className="font-medium">
+      {isEditing ? (
+          <input
+            type="text"
+            name="color"
+            value={2000}
+            onChange={handleChange}
+          />
+        ) : (
+          <span>{productInfo.productStars}/5⭐</span>
+        )}
+      </p>
       <p className="font-medium italic">
         <span className="font-normal">Available:</span>{" "}
         {isEditing ? (
@@ -116,7 +129,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
             onChange={handleChange}
           />
         ) : (
-          2000
+          productInfo.productCount
         )}
       </p>
       <p className="font-medium text-lg">
@@ -144,7 +157,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
           />
         ) : (
           <>
-            {productInfo.categories}
+            {productInfo.productCategory}
           </>
         )}
       </p>
@@ -180,10 +193,11 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
                 _id: productInfo.id,
                 name: productInfo.productName,
                 quantity: 1,
-                image: productInfo.img,
+                image: productInfo.productImages,
                 badge: productInfo.badge,
                 price: productInfo.price,
                 colors: productInfo.color,
+                count: productInfo.productCount,
               })
             );
             notify();

@@ -24,10 +24,14 @@ class Product1(models.Model):
     category = models.CharField(max_length=100, null=False, blank=False,default='Shoes')
     price = models.IntegerField(null=False, blank=False)
     stars = models.DecimalField(decimal_places=2, max_digits=3)
+    price = models.IntegerField(null=False, blank=False)
+    stars = models.DecimalField(decimal_places=2, max_digits=3)
     description = models.TextField(null=True, blank=True)
+    url = models.TextField(null=True, blank=True)
     url = models.TextField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
+    product_count = models.IntegerField(null=False, blank=False, default=0)
     product_count = models.IntegerField(null=False, blank=False, default=0)
 
     def __str__(self):
@@ -39,7 +43,10 @@ class Product1(models.Model):
             'name': self.name,
             'category': self.category,
             'stars': float(str(self.stars)) if self.stars else None,
+            'stars': float(str(self.stars)) if self.stars else None,
             'desc': self.description,
+            'url': self.url,
+            'price': self.price,
             'url': self.url,
             'price': self.price,
             'date_created': self.date_created,

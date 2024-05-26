@@ -217,7 +217,7 @@ DATABASES = {
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb+srv://management_app:lyk99lhp@cluster0.fozvhhq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-        },
+        }
     },
 }
 

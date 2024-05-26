@@ -20,6 +20,7 @@ export const usePaginationItems = () => {
     const product_list = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_list`);
+        console.log(response);
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
@@ -36,7 +37,8 @@ export const usePaginationItems = () => {
           productStars: item.stars,
           dateCreated: item.date_created,
           dateModified: item.date_modified,
-          productCount: item.product_count
+          productCount: item.product_count,
+          productImages: item.url
         }));
         setProductList(renamedData);
         // console.log(productList);
@@ -45,6 +47,7 @@ export const usePaginationItems = () => {
       }
     };
     product_list();
+
   }, []);
   return productList;
 };

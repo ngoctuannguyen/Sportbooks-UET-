@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { ImCross } from "react-icons/im";
 import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
 import {
   deleteItem,
   drecreaseQuantity,
   increaseQuantity,
+  updateItemQuantity,
 } from "../../redux/orebiSlice";
 
-const ItemCard = ({ item }) => {
+const ItemCard = ({ item, updateTotalAmt }) => {
+  const [quantity, setQuantity] = useState(item.quantity);
   const dispatch = useDispatch();
+  const updateTotalPrice = (newQuantity) => {
+    const parsedQuantity = parseInt(newQuantity);
+    if (isNaN(parsedQuantity) || parsedQuantity < 0) return;
+    if (parsedQuantity > item.count) {
+      toast.error('Vượt quá số lượng hàng trong kho.\n Số lượng tối đa được thêm là: ' + item.count);
+    } else {
+      setQuantity(parsedQuantity);
+      dispatch(updateItemQuantity({ id: item._id, quantity: parsedQuantity }));
+    }
+  };
+  useEffect(() => {
+    updateTotalAmt();
+  }, [quantity]);
   return (
     <div className="w-full grid grid-cols-5 mb-4 border py-2">
       <div className="flex col-span-5 mdl:col-span-2 items-center gap-4 ml-4">
@@ -21,25 +38,19 @@ const ItemCard = ({ item }) => {
       </div>
       <div className="col-span-5 mdl:col-span-3 flex items-center justify-between py-4 mdl:py-0 px-4 mdl:px-0 gap-6 mdl:gap-0">
         <div className="flex w-1/3 items-center text-lg font-semibold">
-          ${item.price}
+          {item.price}đ
         </div>
         <div className="w-1/3 flex items-center gap-6 text-lg">
-          <span
-            onClick={() => dispatch(drecreaseQuantity({ _id: item._id }))}
-            className="w-6 h-6 bg-gray-100 text-2xl flex items-center justify-center hover:bg-gray-300 cursor-pointer duration-300 border-[1px] border-gray-300 hover:border-gray-300"
-          >
-            -
-          </span>
-          <p>{item.quantity}</p>
-          <span
-            onClick={() => dispatch(increaseQuantity({ _id: item._id }))}
-            className="w-6 h-6 bg-gray-100 text-2xl flex items-center justify-center hover:bg-gray-300 cursor-pointer duration-300 border-[1px] border-gray-300 hover:border-gray-300"
-          >
-            +
-          </span>
+          <input
+            type="number"
+            value={quantity}
+            onChange={(e) => updateTotalPrice(parseInt(e.target.value))}
+            className="w-20 h-8 text-center border-[1px] border-gray-400 rounded-md"
+            min={0}
+          />
         </div>
         <div className="w-1/3 flex items-center font-titleFont font-bold text-lg">
-          <p>${item.quantity * item.price}</p>
+          <p>{(quantity * item.price).toLocaleString()}đ</p>
         </div>
       </div>
     </div>
