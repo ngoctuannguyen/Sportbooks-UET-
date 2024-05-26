@@ -42,7 +42,6 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin, sear
 }
 
 const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice, searchTerm }) => {
-  const paginationItems = usePaginationItems();
   const [items, setItems] = useState([]);
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
@@ -100,17 +99,6 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           productImages: item.url,
           productDesc:item.description
         }));
-        reDefineData.forEach(item => {
-          if (item.productCategory === "Giày") {
-            item.img = spfOne;
-          } else if (item.productCategory === "Áo") {
-            item.img = spfTwo;
-          } else if (item.productCategory === "Quần") {
-            item.img = spfThree;
-          } else if (item.productCategory === "Mũ") {
-            item.img = spfFour;
-          }
-        });
         setItems(reDefineData);
       } catch (error) {
         console.error(error);
