@@ -80,6 +80,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
     }
   );
   const deleteProductInfo = async () => {
+    console.log("ddiddđ", productInfo._id);
     try {
       console.log(productInfoToDelete);
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_delete`, {
@@ -88,7 +89,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "product_id": productInfoToDelete.product_id
+          "product_id": productInfo._id
         }),
       }
       );
@@ -294,7 +295,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
         <button
           onClick={() => {
             const productToAdd = {
-              _id: productInfo.id,
+              _id: productInfo._id,
               name: productInfo.productName,
               quantity: quantity,
               image: productInfo.productImages,

@@ -396,7 +396,7 @@ const Journal = ({ isAdmin }) => {
               <div className="flex items-center mb-8 w-full" style={{ fontSize: '16px' }}>
                 <div className="h-full">
                   <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
-                    <option value="senderPhone" >SĐT người gửi</option>
+                    <option value="receiverPhone" >SĐT người nhận</option>
                     <option value="id">Mã vận đơn</option>
                   </select>
                 </div>
@@ -575,7 +575,7 @@ const Journal = ({ isAdmin }) => {
                     <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
                       <option value="id">Mã vận đơn</option>
                       <option value="order_name" >Tên sản phẩm</option>
-                      <option value="sender_phone" >SĐT người gửi</option>
+                      <option value="sender_phone" >SĐT người nhận</option>
                     </select>
                   </div>
                   <div>
@@ -623,7 +623,7 @@ const Journal = ({ isAdmin }) => {
                         {sortConfig && sortConfig.key === 'sender_phone' ? (
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
-                        SĐT người gửi</th>
+                        SĐT người nhận</th>
                       <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('created_at')}>
                         {sortConfig && sortConfig.key === 'created_at' ? (
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'

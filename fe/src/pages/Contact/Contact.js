@@ -175,7 +175,6 @@ const Contact = ({ isAdmin }) => {
     const filteredCardviewData = results.map(result => result.item);
   
     setFilteredCardviewData(filteredCardviewData);
-    setCardviewData(filteredCardviewData);
   };
 
   return (
@@ -200,6 +199,7 @@ const Contact = ({ isAdmin }) => {
                   email={user.email}
                   address={user.address}
                   membership={user.membership}
+                  searchQuery={searchName}
                 />
               ))}
             </div>

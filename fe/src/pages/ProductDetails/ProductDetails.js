@@ -73,6 +73,7 @@ const ProductDetails = ({ isAdmin }) => {
     if (isConfirmed) {
       console.log("Product deleted");
       navigate('/admin/product');
+      window.location.reload();
     }
   };
 
