@@ -15,7 +15,7 @@ const Product = (props, { isAdmin}) => {
   const { query } = props;
   const dispatch = useDispatch();
   const notify = () => toast.success("Thêm vào giỏ hàng thành công!");
-  const _id = props.productName;
+  const _id = "product_id=" + props._id;
   const idString = (_id) => {
     return String(_id).toLowerCase().split(" ").join("");
   };

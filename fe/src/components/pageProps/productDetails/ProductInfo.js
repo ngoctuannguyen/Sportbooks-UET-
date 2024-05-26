@@ -18,21 +18,26 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
   const dispatch = useDispatch();
 
   // product update
-  const [productInfoToChange, setProductInfoToChange] = useState(
-    {
-      "product_id": 100,
-      "name": "a",
-      "category": "a",
-      "price": 100,
-      "stars": 4.5,
-      "desc": "a",
-      "product_count": 1,
-      "url": "a"
-    }
-  );
+  const [productInfoToChange, setProductInfoToChange] = useState({});
+
+  useEffect(() => {
+    setProductInfoToChange({
+      product_id: productInfo._id,
+      name: editedProductInfo.productName,
+      category: editedProductInfo.productCategory,
+      price: editedProductInfo.price,
+      stars: editedProductInfo.productStars,
+      desc: editedProductInfo.productDesc,
+      product_count: editedProductInfo.productCount,
+      url: editedProductInfo.productImages,
+    });
+    console.log("iddddddd", editedProductInfo._id);
+  }, [editedProductInfo]);
+
+  console.log(editedProductInfo.id);
   const changProductInfo = async () => {
     try {
-      console.log(productInfoToChange);
+      console.log("id",productInfoToChange);
       console.log(productInfoToChange.id);
       console.log(productInfoToChange.name);
       console.log(productInfoToChange.category);
@@ -42,21 +47,21 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
       console.log(productInfoToChange.product_count);
       console.log(productInfoToChange.url);
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_update`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "product_id": productInfoToChange.product_id,
-            "name": productInfoToChange.name,
-            "category": productInfoToChange.category,
-            "price": productInfoToChange.price,
-            "stars": productInfoToChange.stars,
-            "desc": productInfoToChange.desc,
-            "product_count": productInfoToChange.product_count,
-            "url": productInfoToChange.url
-          }),
-        }
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "product_id": productInfoToChange.product_id,
+          "name": productInfoToChange.name,
+          "category": productInfoToChange.category,
+          "price": productInfoToChange.price,
+          "stars": productInfoToChange.stars,
+          "desc": productInfoToChange.desc,
+          "product_count": productInfoToChange.product_count,
+          "url": productInfoToChange.url
+        }),
+      }
       );
       if (!res.ok) {
         throw new Error("Update failed");
@@ -78,14 +83,14 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
     try {
       console.log(productInfoToDelete);
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_delete`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "product_id": productInfoToDelete.product_id
-          }),
-        }
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "product_id": productInfoToDelete.product_id
+        }),
+      }
       );
       if (!res.ok) {
         throw new Error("Delete failed");
@@ -159,7 +164,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
   console.log(productInfo);
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="text-4xl font-semibold">
+      <h2 className="text-4xl">
         {isEditing ? (
           <input
             type="text"
@@ -183,7 +188,7 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
           />
         ) : (
           <>
-            {Number(productInfo.price).toLocaleString()} vnd
+            {Number(productInfo.price).toLocaleString()} đ
           </>
         )}
       </p>
@@ -192,8 +197,8 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
       <p className="text-base text-gray-600">
         {isEditing ? (
           <textarea
-            name="des"
-            value={editedProductInfo.des}
+            name="productDesc"
+            value={editedProductInfo.productDesc}
             onChange={handleChange}
             className="w-full h-36"
           />
@@ -205,8 +210,8 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
         {isEditing ? (
           <input
             type="text"
-            name="color"
-            value={2000}
+            name="productStars"
+            value={editedProductInfo.productStars}
             onChange={handleChange}
           />
         ) : (
@@ -226,32 +231,34 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
           productInfo.color
         )}
       </p>
-      <div className="flex gap-6 items-center">
+      <div className="flex items-center">
         <p className="font-medium gap-4">
-          <span className="font-normal">Quantity:</span>{" "}
           {isAdmin ? null : (
-            <input
-              type="number"
-              value={quantity}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  updateQuantity(0); // or handle it as per your logic
-                } else {
-                  updateQuantity(parseInt(value));
-                }
-              }}
-              className="w-20 h-10 text-center border-[1px] border-gray-400 rounded-md"
-              min={0}
-            />
+            <div>
+              <span className="font-normal">Quantity: </span>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "") {
+                    updateQuantity(0); // or handle it as per your logic
+                  } else {
+                    updateQuantity(parseInt(value));
+                  }
+                }}
+                className="w-20 mr-8 h-10 text-center border-[1px] border-gray-400 rounded-md"
+                min={0}
+              />
+            </div>
           )}
         </p>
         <p className="font-normal italic text-gray-500 text-lg">
           {isEditing ? (
             <input
               type="text"
-              name="color"
-              value={2000}
+              name="productCount"
+              value={editedProductInfo.productCount}
               onChange={handleChange}
             />
           ) : (
@@ -313,8 +320,8 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
         {isEditing ? (
           <input
             type="text"
-            name="categories"
-            value={editedProductInfo.categories}
+            name="productCategory"
+            value={editedProductInfo.productCategory}
             onChange={handleChange}
             className="mr-2 w-full"
           />
