@@ -6,9 +6,25 @@ function highlightMatches(text, query) {
     return text.replace(regex, '<mark style="background-color: yellow;">$1</mark>');
 }
 
-const CardView = ({ image, name, id, phone, email, address, membership, searchQuery, onDelete }) => {
+const CardView = ({ image, name, id, phone, email, address, membership, username, searchQuery, onDelete }) => {
+    const deleteAdmin = async () => {
+        try {
+            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "admin_username": username }),
+            });
+            const data = await res.data();
+            console.log('Admin deleted:', data);
+        } catch (error) {
+            console.error('Error deleting admin:', error);
+        }
+    }
     const handleDeleteClick = () => {
         onDelete(id); 
+        deleteAdmin();
     };
     return (
         <div className="border rounded-lg p-4">

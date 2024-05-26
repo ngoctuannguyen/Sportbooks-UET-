@@ -24,6 +24,12 @@ function Profile({ isAdmin }) {
     avatar: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg", // placeholder for avatar image
   });
 
+  // admin profile
+  const [adminInfo, setAdminInfo] = useState(
+    {
+      username: 'huongluong23',
+    }
+  );
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {

@@ -92,6 +92,7 @@ const Contact = ({ isAdmin }) => {
           email: item.email,
           address: item.address,
           membership: item.gender,
+          usename: item.username,
         }));
         setUsers(renamedData);
       } catch (error) {
@@ -162,6 +163,7 @@ const Contact = ({ isAdmin }) => {
                   email={user.email}
                   address={user.address}
                   membership={user.membership}
+                  username={user.usename}
                   searchQuery={searchName}
                   onDelete={handleDelete}
                 />
