@@ -17,7 +17,7 @@ from django.db import connection
 
 from .serializers import CartSerializer,UserSerializer,OrderSerializer
 
-from . models import Cart, Product1, User, Order, Admin
+from . models import Cart, Product1, User, Order, Admin, OrderFE
 
 connect_sql = connection.cursor()
 
@@ -332,12 +332,46 @@ def admin_search(request):
     # }
 
 # api order
-    
+@api_view(['GET'])
+def orders(request):
+    api_urls = {
+        'List': '/order_list',
+        'Create': '/order_create',
+        'Update': '/order_update',
+        'Delete': '/order_delete',
+    }
+    return Response(api_urls, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def order_list(request):
-    orders = Order.objects.all()
-    serializer = OrderSerializer(orders, many=True)
-    return Response(serializer.data)
+    orders = OrderFE.objects.using('mongodb').all()
+    results = [order.to_json() for order in orders]
+    return Response(results, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def order_create(request):
+    order = OrderFE(
+        id_number=request.data.get('id_number'),
+        total_amount=request.data.get('total_amount'),
+        product=request.data.get('product'),
+        name=request.data.get('name'),
+        phone=request.data.get('phone'),
+        address=request.data.get('address'),
+        status=request.data.get('status'),
+        note=request.data.get('note'),
+    )
+    order.save(using='mongodb')
+    return Response(order.to_json(), status=status.HTTP_201_CREATED)
+    # {
+    #     "id_number": 1,
+    #     "total_amount": 100000,
+    #     "product": "",
+    #     "name": "",
+    #     "phone": "",
+    #     "address": "",
+    #     "status": "",
+    #     "note": ""
+    # }
 
 @api_view(['POST'])
 def create_order(request):

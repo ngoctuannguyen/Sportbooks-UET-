@@ -16,6 +16,32 @@ const Payment = () => {
   const [errMessages, setErrMessages] = useState("");
   const [idNumber, setIdNumber] = useState("");
 
+  // order create
+  const createOrder = async () => {
+    try {
+      const response = await fetch (`${process.env.REACT_APP_SERVER_URL}/api/orders/order_create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "id_number": idNumber,
+            "total_amount": total,
+            "product": productNames,
+            "name": clientName,
+            "phone": email,
+            "address": messages,
+            "status": "pending",
+            "note": ""
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const randomId = Math.floor(Math.random() * 1000000);
     setIdNumber(randomId);
@@ -64,7 +90,7 @@ const Payment = () => {
     }
     if (clientName && email && messages) {
       toast.success("Đặt hàng thành công!");
-
+      createOrder();
       setTimeout(() => {
         navigate('/order', {
           state: {

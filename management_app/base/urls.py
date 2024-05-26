@@ -81,6 +81,22 @@ urlpatterns = [
             views.admin_search, 
             name='admin_search'
       ),
+      # api order
+      path(
+            'orders', 
+            views.orders,
+            name='orders'
+      ),
+      path(
+            'orders/order_list',
+            views.order_list,
+            name='order_list'
+      ),
+      path(
+            'orders/order_create',
+            views.order_create,
+            name='order_create'
+      ),
 
 
     

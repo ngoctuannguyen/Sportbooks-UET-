@@ -39,6 +39,20 @@ const Journal = ({ isAdmin }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [prevLocation, setPrevLocation] = useState("");
+
+  // order list
+  useEffect(() => {
+    const orderList = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/order_list`);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    orderList();
+  }, []);
   
   const {clientName, email, messages, total, productNames, quantitys, idNumber} = location.state || {};
   console.log(location.state)

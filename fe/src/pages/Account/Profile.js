@@ -27,7 +27,7 @@ function Profile({ isAdmin }) {
   // admin profile
   const [adminInfo, setAdminInfo] = useState(
     {
-      username: 'admin1',
+      username: 'huongluong23',
     }
   );
   useEffect(() => {
@@ -65,11 +65,10 @@ function Profile({ isAdmin }) {
     fetchUserInfo();
   }, []);
 
-
   // admin update profile
   const [adminInfoToUpdate, setAdminInfoToUpdate] = useState(
     {
-      "username": "admin1",
+      "username": "huongluong23",
       "name": "",
       "email": "",
       "address": "",
@@ -90,8 +89,8 @@ function Profile({ isAdmin }) {
           "name": adminInfoToUpdate.name,
           "email": adminInfoToUpdate.email,
           "address": adminInfoToUpdate.address,
-          "phone": userInfo.phone,
-          "gender": userInfo.gender
+          "phone": adminInfoToUpdate.phone,
+          "gender": adminInfoToUpdate.gender
       }),
       });
       if (!response.ok) {

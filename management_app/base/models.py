@@ -96,17 +96,30 @@ class Customer(models.Model):
             'phone': self.customer_phonenumber
         }
 
-# class Order(models.Model):
-#     order_id = models.IntegerField(primary_key=True)
-#     product_id = models.IntegerField()
-#     customer_id = models.IntegerField()
-#     date_created = models.DateTimeField(auto_now_add=True)
-#     quantity = models.IntegerField()
-#     status = models.CharField(max_length=20, default='PENDING')
-#     total_price = models.DecimalField(decimal_places=2, max_digits=6)
+class OrderFE(models.Model):
+    id_number = models.IntegerField(null=False, blank=False)
+    total_amount = models.IntegerField(null=False, blank=False)
+    product = models.TextField(null=False, blank=False)
+    name = models.CharField(max_length=200, null=False, blank=False)
+    phone = models.CharField(max_length=20, null=False, blank=False)
+    address = models.TextField(null=False, blank=False)
+    note = models.TextField(null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True, blank=True)
+    status = models.CharField(max_length=50, null=False, blank=False, default='Pending')
 
-        
-
+    def __str__(self):
+        return self.id_number
+    
+    def to_json(self):
+        return {
+            'id': self.id_number,
+            'total_amount': self.total_amount,
+            'product': self.product,
+            'name': self.name,
+            'phone': self.phone,
+            'address': self.address,
+            'note': self.note
+        }
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
