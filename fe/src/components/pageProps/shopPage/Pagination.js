@@ -18,7 +18,7 @@ import {
   newArrFour,
 } from "../../../assets/images/index";
 
-function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
+function Items({ currentItems, selectedBrands, selectedCategories, isAdmin, searchTerm }) {
   // Filter items based on selected brands and categories
   const filteredItems = currentItems.filter((item) => {
     const isBrandSelected =
@@ -36,7 +36,7 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
     <>
       {filteredItems.map((item) => (
         <div key={item._id} className="w-full">
-          <Product isAdmin = {isAdmin}
+          <Product isAdmin = {isAdmin} query={searchTerm}
             _id={item._id}
             img={item.productImages}
             productName={item.productName}
@@ -55,7 +55,7 @@ function Items({ currentItems, selectedBrands, selectedCategories, isAdmin }) {
   );
 }
 
-const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice }) => {
+const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPrice, maxPrice, searchTerm }) => {
   const paginationItems = usePaginationItems();
   const [items, setItems] = useState([]);
   const [itemOffset, setItemOffset] = useState(0);
@@ -133,6 +133,7 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
         console.error(error);
       }
     };
+    console.log("product_search", searchTerm);
     product_search();
   }, [paginationItems, productName, productCategory, minPrice, maxPrice]);
 
@@ -143,6 +144,7 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
           currentItems={currentItems}
           selectedBrands={selectedBrands}
           selectedCategories={selectedCategories}
+          searchTerm={searchTerm}
         />{" "}
       </div>
       <div className="flex flex-col mdl:flex-row justify-center mdl:justify-between items-center">
