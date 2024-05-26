@@ -179,7 +179,7 @@ const Contact = ({ isAdmin }) => {
             <Breadcrumbs title="Users" prevLocation={prevLocation} />
             <div className="flex w-full pl-48 pr-48">
               <input className="w-4/5 h-10 border-2 border-gray-300 rounded-md px-2" type="text" placeholder="Search for users..." />
-              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={(e) => setSearchQuery(e.target.value)}>Search</button>
+              <button className="w-1/5 h-10 bg-primeColor text-white rounded-md" onClick={(e) => handleSearch()}>Search</button>
             </div>
             {/* Display the card views */}
             <div className="grid grid-cols-6 gap-4 mt-16">
