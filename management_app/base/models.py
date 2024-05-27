@@ -97,7 +97,7 @@ class Customer(models.Model):
         }
 
 class OrderFE(models.Model):
-    id_number = models.IntegerField(null=False, blank=False)
+    id_number = models.IntegerField(primary_key=True, null=False, blank=False)
     total_amount = models.IntegerField(null=False, blank=False)
     product = models.TextField(null=False, blank=False)
     name = models.CharField(max_length=200, null=False, blank=False)

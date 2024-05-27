@@ -97,6 +97,11 @@ urlpatterns = [
             views.order_create,
             name='order_create'
       ),
+      path(
+            'orders/order_update',
+            views.order_update,
+            name='order_update'
+      ),
 
 
     

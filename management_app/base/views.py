@@ -375,6 +375,35 @@ def order_create(request):
     # }
 
 @api_view(['POST'])
+def order_update(request):
+    order_id = request.data.get('id_number', None)
+    try:
+        order = OrderFE.objects.using('mongodb').get(id_number=order_id)
+    except OrderFE.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    order.total_amount = request.data.get('total_amount', order.total_amount)
+    order.product = request.data.get('product', order.product)
+    order.name = request.data.get('name', order.name)
+    order.phone = request.data.get('phone', order.phone)
+    order.address = request.data.get('address', order.address)
+    order.status = request.data.get('status', order.status)
+    order.note = request.data.get('note', order.note)
+    order.save(using='mongodb')
+
+    return Response(order.to_json(), status=status.HTTP_200_OK)
+    # {
+    #     "id_number": 1,
+    #     "total_amount": 100000,
+    #     "product": "",
+    #     "name": "",
+    #     "phone": "",
+    #     "address": "",
+    #     "status": "",
+    #     "note": ""
+    # }
+
+@api_view(['POST'])
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
     if serializer.is_valid():

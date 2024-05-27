@@ -12,6 +12,39 @@ import './Order.css';
 function StatusButton() {
   const [status, setStatus] = useState('');
 
+  // order update
+  const [orderInfoToUpdate, setOrderInfoToUpdate] = useState({
+    "id_number": 1, // check order update theo id
+    "total_amount": 100000,
+    "product": "",
+    "name": "",
+    "phone": "",
+    "address": "",
+    "status": "",
+    "note": ""
+  });
+  const updateOrder = async () => {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/order_update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "id_number": orderInfoToUpdate.id_number,
+        "total_amount": orderInfoToUpdate.total_amount,
+        "product": orderInfoToUpdate.product,
+        "name": orderInfoToUpdate.name,
+        "phone": orderInfoToUpdate.phone,
+        "address": orderInfoToUpdate.address,
+        "status": orderInfoToUpdate.status,
+        "note": orderInfoToUpdate.note
+      }),
+    });
+    const data = await response.json();
+    console.log('Order updated:', data);
+  };
+  // updateOrder(); // call this function to update order
+  
   return (
     status === '' ? (
       <>
