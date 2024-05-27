@@ -13,6 +13,7 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
     const [editedPhone, setEditedPhone] = useState(phone);
     const [editedEmail, setEditedEmail] = useState(email);
     const [editedAddress, setEditedAddress] = useState(address);
+    const [editedMembership, setEditedMembership] = useState(initialMembership);
     const popupRef = useRef(null);
 
     const deleteAdmin = async () => {
@@ -24,7 +25,7 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
                 },
                 body: JSON.stringify({ "admin_username": username }),
             });
-            const data = await res.json(); // Sửa từ res.data() thành res.json()
+            const data = await res.json();
             console.log('Admin deleted:', data);
         } catch (error) {
             console.error('Error deleting admin:', error);
@@ -46,7 +47,7 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
     };
 
     const handleMembershipChange = (selectedMembership) => {
-        setSelectedMembership(selectedMembership);
+        setEditedMembership(selectedMembership);
     };
 
     const handleClickOutsidePopup = (e) => {
@@ -56,7 +57,6 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
     };
 
     useEffect(() => {
-        // Thêm một event listener để kiểm tra khi click ra ngoài popup
         document.addEventListener("mousedown", handleClickOutsidePopup);
         return () => {
             document.removeEventListener("mousedown", handleClickOutsidePopup);
@@ -66,7 +66,7 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
     const handleSaveClick = async () => {
         console.log('Saving admin:', editedName, username, editedEmail, editedAddress, selectedMembership);
         try {
-            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admins_update`, {
+            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_update`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,16 +77,17 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
                     "phone": editedPhone,
                     "email": editedEmail,
                     "address": editedAddress,
+                    "gender": editedMembership
                 }),
-            }
-            );
-            if (!res.ok) {
-                throw new Error("Update failed");
-            }
+            });
             const data = await res.json();
-            console.log(data);
+            if (!res.ok) {
+                throw new Error(`Update failed: ${data.message || 'Unknown error'}`);
+            }
+            console.log('Admin updated:', data);
+            window.location.reload();
         } catch (err) {
-            console.log(err);
+            console.log('Error updating admin:', err);
         }
     };
 
@@ -116,57 +117,58 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
                         </label>
                         <label>
                             Name:
-                            <input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
+                            <input className='border-2 rounded' type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
                         </label>
                         <label>
                             Phone:
-                            <input type="text" value={editedPhone} onChange={(e) => setEditedPhone(e.target.value)} />
+                            <input className='border-2 rounded' type="text" value={editedPhone} onChange={(e) => setEditedPhone(e.target.value)} />
                         </label>
                         <label>
                             Email:
-                            <input type="text" value={editedEmail} onChange={(e) => setEditedEmail(e.target.value)} />
+                            <input className='border-2 rounded' type="text" value={editedEmail} onChange={(e) => setEditedEmail(e.target.value)} />
                         </label>
                         <label>
                             Address:
-                            <input type="text" value={editedAddress} onChange={(e) => setEditedAddress(e.target.value)} />
+                            <input className='border-2 rounded' type="text" value={editedAddress} onChange={(e) => setEditedAddress(e.target.value)} />
                         </label>
                         <label>
                             Gender:
                         </label>
                         <div className='gap-4'>
-                            <input
-                                type="radio"
-                                id="male"
-                                name="gender"
-                                value="Nam"
-                                checked={selectedMembership === 'Nam'}
-                                onChange={() => handleMembershipChange('Nam')}
-                                className='mr-2'
-                            />
-                            <label htmlFor="male" className='mr-6'>Nam</label>
+    <input
+        type="radio"
+        id="male"
+        name="gender"
+        value="Nam"
+        checked={editedMembership === 'Nam'}
+        onChange={() => handleMembershipChange('Nam')}
+        className='mr-2'
+    />
+    <label htmlFor="male" className='mr-6'>Nam</label>
 
-                            <input
-                                type="radio"
-                                id="female"
-                                name="gender"
-                                value="Nữ"
-                                checked={selectedMembership === 'Nữ'}
-                                onChange={() => handleMembershipChange('Nữ')}
-                                className='mr-2'
-                            />
-                            <label htmlFor="female" className='mr-6'>Nữ</label>
+    <input
+        type="radio"
+        id="female"
+        name="gender"
+        value="Nữ"
+        checked={editedMembership === 'Nữ'}
+        onChange={() => handleMembershipChange('Nữ')}
+        className='mr-2'
+    />
+    <label htmlFor="female" className='mr-6'>Nữ</label>
 
-                            <input
-                                type="radio"
-                                id="normal"
-                                name="gender"
-                                value="Normal"
-                                checked={selectedMembership === 'Normal'}
-                                onChange={() => handleMembershipChange('Normal')}
-                                className='mr-2'
-                            />
-                            <label htmlFor="normal">Khác</label>
-                        </div>
+    <input
+        type="radio"
+        id="normal"
+        name="gender"
+        value="Normal"
+        checked={editedMembership === 'Normal'}
+        onChange={() => handleMembershipChange('Khác')}
+        className='mr-2'
+    />
+    <label htmlFor="normal">Khác</label>
+</div>
+
                         <button onClick={handleSaveClick} className="bg-yellow-500 text-xs hover:bg-yellow-700 text-white py-2 px-4 rounded">Save</button>
                     </div>
                 </div>

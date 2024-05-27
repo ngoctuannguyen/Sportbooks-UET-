@@ -203,28 +203,25 @@ const Journal = ({ isAdmin }) => {
   const filteredData = React.useMemo(() => {
     let result = sortedData
     console.log("result", result);
-    // switch (activeTab) {
-    //   case "2":
-    //     result = result.filter(item => item.status === "Pending");
-    //     break;
-    //   case "3":
-    //     result = result.filter(item => item.status === "In Progress");
-    //     break;
-    //   case "4":
-    //     result = result.filter(item => item.status === "In warehouse");
-    //     break;
-    //   case "5":
-    //     result = result.filter(item => item.status === "Completed");
-    //     break;
-    //   case "6":
-    //     result = result.filter(item => item.status === "Cancelled");
-    //     break;
-    //   case "7":
-    //     result = result.filter(item => item.status === "Returned");
-    //     break;
-    //   default:
-    //     break;
-    // }
+    switch (activeTab) {
+      case "2":
+        result = result.filter(item => item.status === "Đang chờ");
+        break;
+      case "3":
+        result = result.filter(item => item.status === "Đang vận chuyển");
+        break;
+      case "4":
+        result = result.filter(item => item.status === "Hoàn thành");
+        break;
+      case "5":
+        result = result.filter(item => item.status === "Đã hủy");
+        break;
+      case "6":
+        result = result.filter(item => item.status === "Hoàn hàng");
+        break;
+      default:
+        break;
+    }
     if (searchTerm) {
       if (searchOption === 'id') {
         result = result.filter(item => item.id && item.id.toString().includes(searchTerm));
@@ -397,8 +394,8 @@ const Journal = ({ isAdmin }) => {
               <div className="flex items-center mb-8 w-full" style={{ fontSize: '16px' }}>
                 <div className="h-full">
                   <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
-                    <option value="phonene" >SĐT người nhận</option>
                     <option value="id">Mã vận đơn</option>
+                    <option value="phonene" >SĐT người nhận</option>
                   </select>
                 </div>
                 <div>
@@ -422,10 +419,9 @@ const Journal = ({ isAdmin }) => {
                 </TabPane>
                 <TabPane tab="Đang vận chuyển" key="3" className="flex-1 text-center w-full">
                 </TabPane>
-                <TabPane tab="Lưu kho" key="4" className="flex-1 text-center w-full" />
-                <TabPane tab="Đã giao" key="5" className="flex-1 text-center w-full" />
-                <TabPane tab="Đã hủy" key="6" className="flex-1 text-center w-full" />
-                <TabPane tab="Hoàn hàng" key="7" className="flex-1 text-center w-full" />
+                <TabPane tab="Đã giao" key="4" className="flex-1 text-center w-full" />
+                <TabPane tab="Đã hủy" key="5" className="flex-1 text-center w-full" />
+                <TabPane tab="Hoàn hàng" key="6" className="flex-1 text-center w-full" />
               </AntTabs>
 
               <table className="w-full border-collapse" style={{ fontSize: '15px' }}>
@@ -473,7 +469,7 @@ const Journal = ({ isAdmin }) => {
                       <tr key={item.id}>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.id}</td>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.date_created}</td>
-                        <td className="border border-gray-800 p-2 text-center">{item.status}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.status}</td>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.address}</td>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.phone}</td>
                         <td className="border border-gray-800 p-2 text-center">
@@ -498,27 +494,24 @@ const Journal = ({ isAdmin }) => {
                                   <div className="mt-4">
                                     <table className="w-full border-0">
                                       <thead>
-                                        <tr>
-                                          <th className="font-bold text-blue-900 uppercase text-base border-2 p-2 border-gray-200 bg-gray-300">Bên gửi</th>
-                                          <th className="font-bold text-blue-900 uppercase text-base border-2 p-2 border-gray-200 bg-gray-300">Bên nhận</th>
-                                        </tr>
                                       </thead>
                                       <tbody>
+
+                                        <tr className="bg-white border-2 p-2 border-blue-200">
+                                          <td className="py-2 border-2 p-2 font-bold">
+                                            Tên sản phẩm: {item.product}
+                                          </td>                                   </tr>
                                         <tr className="bg-yellow-50 border-2 p-2 border-gray-200">
-                                          <td className="py-2 border-2 p-2">Người gửi: {item.sender_name}</td>
-                                          <td className="py-2 border-2 p-2">Người nhận: {item.receiver_name}</td>
+                                          <td className="py-2 border-2 p-2 font-bold">Người nhận: {item.name}</td>
                                         </tr>
                                         <tr className="bg-white border-2 p-2 border-gray-200">
-                                          <td className="py-2 border-2 p-2">Số điện thoại: {item.sender_phone}</td>
-                                          <td className="py-2 border-2 p-2">Số điện thoại: {item.phone}</td>
+                                          <td className="py-2 border-2 p-2 font-bold">Số điện thoại: {item.phone}</td>
                                         </tr>
                                         <tr className="bg-yellow-50 border-2 p-2 border-gray-200">
-                                          <td className="py-2 border-2 p-2">Địa chỉ: {item.sender_address}</td>
-                                          <td className="py-2 border-2 p-2">Địa chỉ: {item.receiver_address}</td>
+                                          <td className="py-2 border-2 p-2 font-bold">Địa chỉ: {item.address}</td>
                                         </tr>
                                         <tr className="bg-white border-2 p-2 border-gray-200">
-                                          <td className="py-2 border-2 p-2">Ngày gửi: {item.date_created}</td>
-                                          <td className="py-2 border-2 p-2">Thời gian cập nhật: {item.updated_at}</td>
+                                          <td className="py-2 border-2 p-2 font-bold">Ngày gửi: {item.date_created}</td>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -527,10 +520,6 @@ const Journal = ({ isAdmin }) => {
                                 <div className="flex items-end space-x-2 mt-4">
                                   <div className="font-bold text-gray-600 uppercase">Trạng thái: </div>
                                   <div className="">{item.status}</div>
-                                </div>
-                                <div className="flex items-end space-x-2">
-                                  <div className="font-bold text-gray-600 uppercase">Kho hiện tại: </div>
-                                  <div className="">{item.current_warehouse}</div>
                                 </div>
                               </div>
                             </div>
@@ -563,8 +552,7 @@ const Journal = ({ isAdmin }) => {
                   <div className="h-full">
                     <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
                       <option value="id">Mã vận đơn</option>
-                      <option value="product" >Tên sản phẩm</option>
-                      <option value="phonene" >SĐT người nhận</option>
+                      \                      <option value="phonene" >SĐT người nhận</option>
                     </select>
                   </div>
                   <div>
@@ -588,10 +576,9 @@ const Journal = ({ isAdmin }) => {
                   </TabPane>
                   <TabPane tab="Đang vận chuyển" key="3" className="flex-1 text-center w-full">
                   </TabPane>
-                  <TabPane tab="Lưu kho" key="4" className="flex-1 text-center w-full" />
-                  <TabPane tab="Đã giao" key="5" className="flex-1 text-center w-full" />
-                  <TabPane tab="Đã hủy" key="6" className="flex-1 text-center w-full" />
-                  <TabPane tab="Hoàn hàng" key="7" className="flex-1 text-center w-full" />
+                  <TabPane tab="Đã giao" key="4" className="flex-1 text-center w-full" />
+                  <TabPane tab="Đã hủy" key="5" className="flex-1 text-center w-full" />
+                  <TabPane tab="Hoàn hàng" key="6" className="flex-1 text-center w-full" />
                 </AntTabs>
 
                 <table className="w-full border-collapse" style={{ fontSize: '15px' }}>
@@ -633,7 +620,7 @@ const Journal = ({ isAdmin }) => {
                           <td className="border border-gray-800 p-2 text-center whitespace truncate-2-lines">{item.product}</td>
                           <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.phone}</td>
                           <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.date_created}</td>
-                          <td className="border border-gray-800 p-2 text-center">{item.status}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.status}</td>
                         </tr>
                       ))
                     ) : (
