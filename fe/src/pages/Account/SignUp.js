@@ -6,6 +6,7 @@ import { logoLight } from "../../assets/images";
 const SignUp = () => {
   // ============= Initial State Start here =============
   const [clientName, setClientName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -68,6 +69,24 @@ const SignUp = () => {
   };
   // ================= Email Validation End here ===============
 
+  const createAdmin = async () => {
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "username": username,
+        "name": clientName,
+        "email": email,
+        "address": address,
+        "phone": phone,
+        "gender": ""
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+  };
   const handleSignUp = async (e) => {
     e.preventDefault();
     if (checked) {
@@ -111,9 +130,7 @@ const SignUp = () => {
         password &&
         password.length >= 6 &&
         address &&
-        city &&
-        country &&
-        zip
+        username
       ) {
         try {
           const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/register`, {
@@ -122,22 +139,24 @@ const SignUp = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              username: clientName,
-              email: email,
+              "username": username,
+              "email": email,
               // phone: phone,
-              password: password,
+              "password": password
               // address: address,
               // city: city,
               // country: country,
               // zip: zip,
             }),
           });
+          const data = await res.json();
+          console.log(data);
           if (!res.ok) {
             setSuccessMsg("Registration failed");
             throw new Error("Registration failed");
           }
-          const data = await res.json();
-          console.log(data);
+          localStorage.setItem("username", username);
+          createAdmin();
           setSuccessMsg(
             `Hello dear ${clientName}, Welcome you to OREBI Admin panel. We received your Sign up request. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
           );
@@ -145,6 +164,7 @@ const SignUp = () => {
           console.log(err);
         }
         setClientName("");
+        setUsername("");
         setEmail("");
         setPhone("");
         setPassword("");
@@ -263,6 +283,18 @@ const SignUp = () => {
                       {errClientName}
                     </p>
                   )}
+                </div>
+                <div className="flex flex-col gap-.5">
+                  <p className="font-titleFont text-base font-semibold text-gray-600">
+                    User Name
+                  </p>
+                  <input
+                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
+                    type="text"
+                    placeholder="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
                 </div>
                 {/* Email */}
                 <div className="flex flex-col gap-.5">

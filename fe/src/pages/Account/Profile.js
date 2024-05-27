@@ -27,11 +27,12 @@ function Profile({ isAdmin }) {
   // admin profile
   const [adminInfo, setAdminInfo] = useState(
     {
-      username: 'huongluong23',
+      username: localStorage.getItem('username'),
     }
   );
   useEffect(() => {
     const fetchUserInfo = async () => {
+      console.log(adminInfo);
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_detail`, {
           method: 'POST',
@@ -40,11 +41,12 @@ function Profile({ isAdmin }) {
           },
           body: JSON.stringify({"admin_username": adminInfo.username}),
         });
+        console.log(response);
+        const data = await response.json();
+        console.log(data);
         if (!response.ok) {
           throw new Error('Failed to fetch user info');
         }
-        const data = await response.json();
-        console.log(data);
         setUserInfo({
           username: data.username,
           name: data.name,
@@ -68,7 +70,7 @@ function Profile({ isAdmin }) {
   // admin update profile
   const [adminInfoToUpdate, setAdminInfoToUpdate] = useState(
     {
-      "username": "huongluong23",
+      "username": adminInfo.username,
       "name": "",
       "email": "",
       "address": "",
