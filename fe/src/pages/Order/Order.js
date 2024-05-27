@@ -7,6 +7,7 @@ import { Tabs as AntTabs } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineEye } from 'react-icons/ai';
 import { FaShippingFast, FaCheck } from 'react-icons/fa';
+import './Order.css';
 
 function StatusButton() {
   const [status, setStatus] = useState('');
@@ -40,22 +41,25 @@ const Journal = ({ isAdmin }) => {
   const location = useLocation();
   const [prevLocation, setPrevLocation] = useState("");
 
-  // order list
+  const [orderList, setOrderList] = useState([]);
+
   useEffect(() => {
     const orderList = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/order_list`);
         const data = await response.json();
         console.log(data);
+        setOrderList(data);
       } catch (error) {
         console.log(error);
       }
     };
     orderList();
   }, []);
-  
-  const {clientName, email, messages, total, productNames, quantitys, idNumber} = location.state || {};
-  console.log(location.state)
+
+  let data = orderList;
+  console.log("dataaorderlist00", orderList);
+  console.log("dataaorderlist", data);
 
   const [openReviewBill, setOpenReviewBill] = useState(false);
   const closeModalReviewBill = () => {
@@ -81,7 +85,7 @@ const Journal = ({ isAdmin }) => {
     sender_address: '',
     sender_city_id: 0,
     receiver_name: '',
-    receiver_phone: '',
+    phone: '',
     receiver_address: '',
     receiver_city_id: 0,
     type: '',
@@ -98,51 +102,10 @@ const Journal = ({ isAdmin }) => {
     extra_receive: 0,
   });
 
-  const handleWeightChange = (event) => {
-    setWeight(event.target.value);
-    setShipmentsCreateData({
-      ...shipmentsCreateData,
-      weight_convert: event.target.value
-    });
-  };
 
   const [surcharges, setSurcharges] = useState('');
   const [calculatedValue, setCalculatedValue] = useState('');
 
-  const [warehousesGet, setWarehousesGet] = useState(null);
-  const [shipments, setShipments] = useState(null);
-
-
-  let warehousesGetData = [];
-  if (warehousesGet) {
-    warehousesGetData = warehousesGet;
-  };
-
-  let data = [];
-  if (shipments) {
-    data = shipments;
-  };
-
-  const handleSurchargesChange = (event) => {
-    let value = event.target.value;
-    value = value.replace(/,/g, ''); // remove existing commas
-    value = Number(value);
-    setCalculatedValue(value);
-    if (!isNaN(value)) { // check if the input is a number
-      value = value.toLocaleString(); // format with thousands separators
-      setSurcharges(value);
-    }
-    setShipmentsCreateData({
-      ...shipmentsCreateData,
-      extra_cost: event.target.value
-    });
-  };
-
-  const handleCalculatedValueChange = (event) => {
-    let value = event.target.value;
-    value = Number(value) + weight * 2;
-    setCalculatedValue(value.toLocaleString());
-  };
 
   const [cod, setCod] = useState('');
   const [surcharges2, setSurcharges2] = useState('');
@@ -163,12 +126,9 @@ const Journal = ({ isAdmin }) => {
     });
   };
 
-  const codNumber = Number(cod.replace(/,/g, ''));
-  const surchargesNumber = Number(surcharges2.replace(/,/g, ''));
 
 
-
-  const [searchOption, setSearchOption] = useState('senderPhone');
+  const [searchOption, setSearchOption] = useState('phonene');
 
   const [activeTab, setActiveTab] = useState("1");
 
@@ -184,6 +144,7 @@ const Journal = ({ isAdmin }) => {
 
   const sortedData = React.useMemo(() => {
     let sortableData = [...data];
+    console.log("sortableData", sortableData);
     if (sortConfig !== null) {
       sortableData.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -207,40 +168,47 @@ const Journal = ({ isAdmin }) => {
   };
 
   const filteredData = React.useMemo(() => {
-    let result = sortedData;
-    switch (activeTab) {
-      case "2":
-        result = result.filter(item => item.status === "Pending");
-        break;
-      case "3":
-        result = result.filter(item => item.status === "In Progress");
-        break;
-      case "4":
-        result = result.filter(item => item.status_text === "In warehouse");
-        break;
-      case "5":
-        result = result.filter(item => item.status === "Completed");
-        break;
-      case "6":
-        result = result.filter(item => item.status === "Cancelled");
-        break;
-      case "7":
-        result = result.filter(item => item.status === "Returned");
-        break;
-      default:
-        break;
-    }
+    let result = sortedData
+    console.log("result", result);
+    // switch (activeTab) {
+    //   case "2":
+    //     result = result.filter(item => item.status === "Pending");
+    //     break;
+    //   case "3":
+    //     result = result.filter(item => item.status === "In Progress");
+    //     break;
+    //   case "4":
+    //     result = result.filter(item => item.status === "In warehouse");
+    //     break;
+    //   case "5":
+    //     result = result.filter(item => item.status === "Completed");
+    //     break;
+    //   case "6":
+    //     result = result.filter(item => item.status === "Cancelled");
+    //     break;
+    //   case "7":
+    //     result = result.filter(item => item.status === "Returned");
+    //     break;
+    //   default:
+    //     break;
+    // }
     if (searchTerm) {
-      if (searchTerm && searchOption === 'id') {
-        result = result.filter(item => item.tracking_number.toString().includes(searchTerm));
-      } else if (searchTerm && searchOption === 'senderPhone') {
-        result = result.filter(item => item.sender_phone.toString().includes(searchTerm));
+      if (searchOption === 'id') {
+        result = result.filter(item => item.id && item.id.toString().includes(searchTerm));
+      } else if (searchOption === 'phonene') {
+        result = result.filter(item => item.phone && item.phone.toString().includes(searchTerm));
       }
     } else {
-      result = result.filter(item => item.sender_phone.toString() === phoneNumber);
+      console.log("adminkhong", isAdmin);
+      if (!isAdmin) {
+        result = result.filter(item => item.phone && item.phone.toString() === phoneNumber);
+      }
     }
+
     return result;
   }, [sortedData, activeTab, searchTerm, phoneNumber]);
+
+  console.log("filteredData", filteredData);
 
   const handleSearch = () => {
     const results = data.filter(item => item.property && item.property.includes(searchTerm));
@@ -287,7 +255,7 @@ const Journal = ({ isAdmin }) => {
   const [senderProvince, setSenderProvince] = useState('');
   const [receiverName, setReceiverName] = useState('');
   const [receiverDetailAddress, setReceiverDetailAddress] = useState('');
-  const [receiverPhoneCreated, setReceiverPhoneCreated] = useState('');
+  const [phoneneCreated, setphoneneCreated] = useState('');
   const [receiverProvince, setReceiverProvince] = useState('');
 
   const handleSenderNameChange = (event) => {
@@ -332,11 +300,11 @@ const Journal = ({ isAdmin }) => {
       receiver_address: event.target.value
     });
   }
-  const handleReceiverPhoneCreatedChange = (event) => {
-    setReceiverPhoneCreated(event.target.value);
+  const handlephoneneCreatedChange = (event) => {
+    setphoneneCreated(event.target.value);
     setShipmentsCreateData({
       ...shipmentsCreateData,
-      receiver_phone: event.target.value
+      phone: event.target.value
     });
   }
   const handleReceiverProvinceChange = (event) => {
@@ -396,7 +364,7 @@ const Journal = ({ isAdmin }) => {
               <div className="flex items-center mb-8 w-full" style={{ fontSize: '16px' }}>
                 <div className="h-full">
                   <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
-                    <option value="receiverPhone" >SĐT người nhận</option>
+                    <option value="phonene" >SĐT người nhận</option>
                     <option value="id">Mã vận đơn</option>
                   </select>
                 </div>
@@ -430,14 +398,14 @@ const Journal = ({ isAdmin }) => {
               <table className="w-full border-collapse" style={{ fontSize: '15px' }}>
                 <thead>
                   <tr className="bg-gray-200">
-                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('tracking_number')}>
-                      {sortConfig && sortConfig.key === 'tracking_number' ? (
+                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('id')}>
+                      {sortConfig && sortConfig.key === 'id' ? (
                         sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                       ) : ''}
                       Mã vận đơn
                     </th>
-                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('created_at')}>
-                      {sortConfig && sortConfig.key === 'created_at' ? (
+                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('date_created')}>
+                      {sortConfig && sortConfig.key === 'date_created' ? (
                         sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                       ) : ''}
                       Ngày gửi</th>
@@ -446,28 +414,18 @@ const Journal = ({ isAdmin }) => {
                         sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                       ) : ''}
                       Status</th>
-                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('warehouse')}>
-                      {sortConfig && sortConfig.key === 'warehouse' ? (
-                        sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
-                      ) : ''}
-                      Kho hiện tại</th>
                     <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('updated_at')}>
                       {sortConfig && sortConfig.key === 'updated_at' ? (
                         sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                       ) : ''}
-                      Kho chuyển đến</th>
-                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('sender_phone')}>
-                      {sortConfig && sortConfig.key === 'sender_phone' ? (
-                        sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
-                      ) : ''}
-                      SĐT người gửi</th>
-                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('receiverPhone')}>
-                      {sortConfig && sortConfig.key === 'receiverPhone' ? (
+                      Địa chỉ</th>
+                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('phonene')}>
+                      {sortConfig && sortConfig.key === 'phonene' ? (
                         sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                       ) : ''}
                       SĐT người nhận</th>
-                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('receiverPhone')}>
-                      {sortConfig && sortConfig.key === 'receiverPhone' ? (
+                    <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('phonene')}>
+                      {sortConfig && sortConfig.key === 'phonene' ? (
                         sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                       ) : ''}
                       Action</th>
@@ -480,16 +438,14 @@ const Journal = ({ isAdmin }) => {
                   {filteredData.length > 0 ? (
                     filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.tracking_number}</td>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.created_at}</td>
-                        <td className="border border-gray-800 p-2 text-center">{item.status_text}</td>
-                        <td className="border border-gray-800 p-2">{item.current_warehouse}</td>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.next_delivery}</td>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.sender_phone}</td>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.receiver_phone}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.id}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.date_created}</td>
+                        <td className="border border-gray-800 p-2 text-center">{item.status}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.address}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.phone}</td>
                         <td className="border border-gray-800 p-2 text-center">
                           <div className="flex justify-center items-center">
-                            <StatusButton item={filteredData.find(item => item.tracking_number)} />
+                            <StatusButton item={filteredData.find(item => item.id)} />
                           </div>
                         </td>
                         <td className="border border-gray-800 p-2 text-center cursor-pointer">
@@ -503,7 +459,7 @@ const Journal = ({ isAdmin }) => {
                               <div className="text-sm">
                                 <div className="flex items-end space-x-2">
                                   <div className="font-bold text-gray-600 uppercase">Mã vận đơn: </div>
-                                  <div className="">{item.tracking_number}</div>
+                                  <div className="">{item.id}</div>
                                 </div>
                                 <div className="mt-4">
                                   <div className="mt-4">
@@ -521,14 +477,14 @@ const Journal = ({ isAdmin }) => {
                                         </tr>
                                         <tr className="bg-white border-2 p-2 border-gray-200">
                                           <td className="py-2 border-2 p-2">Số điện thoại: {item.sender_phone}</td>
-                                          <td className="py-2 border-2 p-2">Số điện thoại: {item.receiver_phone}</td>
+                                          <td className="py-2 border-2 p-2">Số điện thoại: {item.phone}</td>
                                         </tr>
                                         <tr className="bg-yellow-50 border-2 p-2 border-gray-200">
                                           <td className="py-2 border-2 p-2">Địa chỉ: {item.sender_address}</td>
                                           <td className="py-2 border-2 p-2">Địa chỉ: {item.receiver_address}</td>
                                         </tr>
                                         <tr className="bg-white border-2 p-2 border-gray-200">
-                                          <td className="py-2 border-2 p-2">Ngày gửi: {item.created_at}</td>
+                                          <td className="py-2 border-2 p-2">Ngày gửi: {item.date_created}</td>
                                           <td className="py-2 border-2 p-2">Thời gian cập nhật: {item.updated_at}</td>
                                         </tr>
                                       </tbody>
@@ -537,7 +493,7 @@ const Journal = ({ isAdmin }) => {
                                 </div>
                                 <div className="flex items-end space-x-2 mt-4">
                                   <div className="font-bold text-gray-600 uppercase">Trạng thái: </div>
-                                  <div className="">{item.status_text}</div>
+                                  <div className="">{item.status}</div>
                                 </div>
                                 <div className="flex items-end space-x-2">
                                   <div className="font-bold text-gray-600 uppercase">Kho hiện tại: </div>
@@ -574,8 +530,8 @@ const Journal = ({ isAdmin }) => {
                   <div className="h-full">
                     <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
                       <option value="id">Mã vận đơn</option>
-                      <option value="order_name" >Tên sản phẩm</option>
-                      <option value="sender_phone" >SĐT người nhận</option>
+                      <option value="product" >Tên sản phẩm</option>
+                      <option value="phonene" >SĐT người nhận</option>
                     </select>
                   </div>
                   <div>
@@ -608,14 +564,14 @@ const Journal = ({ isAdmin }) => {
                 <table className="w-full border-collapse" style={{ fontSize: '15px' }}>
                   <thead>
                     <tr className="bg-gray-200">
-                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('tracking_number')}>
-                        {sortConfig && sortConfig.key === 'tracking_number' ? (
+                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('id')}>
+                        {sortConfig && sortConfig.key === 'id' ? (
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
                         Mã vận đơn
                       </th>
-                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('order_name')}>
-                        {sortConfig && sortConfig.key === 'order_name' ? (
+                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('product')}>
+                        {sortConfig && sortConfig.key === 'product' ? (
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
                         Tên sản phẩm</th>
@@ -624,8 +580,8 @@ const Journal = ({ isAdmin }) => {
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
                         SĐT người nhận</th>
-                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('created_at')}>
-                        {sortConfig && sortConfig.key === 'created_at' ? (
+                      <th className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('date_created')}>
+                        {sortConfig && sortConfig.key === 'date_created' ? (
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
                         Ngày gửi</th>
@@ -640,11 +596,11 @@ const Journal = ({ isAdmin }) => {
                     {filteredData.length > 0 ? (
                       filteredData.map((item) => (
                         <tr key={item.id}>
-                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.tracking_number}</td>
-                          <td className="border border-gray-800 p-2 text-center">{item.order_name}</td>
-                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.sender_phone}</td>
-                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.created_at}</td>
-                          <td className="border border-gray-800 p-2 text-center">{item.status_text}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.id}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace truncate-2-lines">{item.product}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.phone}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.date_created}</td>
+                          <td className="border border-gray-800 p-2 text-center">{item.status}</td>
                         </tr>
                       ))
                     ) : (
@@ -655,13 +611,10 @@ const Journal = ({ isAdmin }) => {
                   </tbody>
                 </table>
               </div>
+
             </div>
+
           </div>
-          <Link to="/shop">
-            <button className="w-52 h-10 bg-primeColor text-white hover:bg-black duration-300">
-              Continue Shopping
-            </button>
-          </Link>
         </div>
       </div>)}</>
   );

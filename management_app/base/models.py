@@ -118,7 +118,9 @@ class OrderFE(models.Model):
             'name': self.name,
             'phone': self.phone,
             'address': self.address,
-            'note': self.note
+            'note': self.note,
+            'date_created': self.date_created,
+            'status': self.status
         }
 
 class Order(models.Model):

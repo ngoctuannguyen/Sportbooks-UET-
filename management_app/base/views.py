@@ -359,6 +359,7 @@ def order_create(request):
         address=request.data.get('address'),
         status=request.data.get('status'),
         note=request.data.get('note'),
+        date_created=request.data.get('date_created'),
     )
     order.save(using='mongodb')
     return Response(order.to_json(), status=status.HTTP_201_CREATED)

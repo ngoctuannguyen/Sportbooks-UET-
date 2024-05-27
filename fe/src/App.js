@@ -50,8 +50,6 @@ function App() {
         <SpecialCase isAdmin={isAdmin} />
         <ScrollRestoration />
         <Outlet />
-        <Footer isAdmin={isAdmin} />
-        <FooterBottom isAdmin={isAdmin} />
       </div>
     );
   };

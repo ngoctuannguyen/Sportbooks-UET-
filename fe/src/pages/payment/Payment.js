@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
 import { toast } from "react-toastify";
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 
 const Payment = () => {
   const location = useLocation();
@@ -15,24 +17,28 @@ const Payment = () => {
   const [errEmail, setErrEmail] = useState("");
   const [errMessages, setErrMessages] = useState("");
   const [idNumber, setIdNumber] = useState("");
+  const date = new Date();
+  const vnTime = toZonedTime(date, 'Asia/Ho_Chi_Minh');
+  const formattedDate = format(vnTime, 'HH:mm:ss dd/MM/yyyy');
 
   // order create
   const createOrder = async () => {
     try {
-      const response = await fetch (`${process.env.REACT_APP_SERVER_URL}/api/orders/order_create`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/order_create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            "id_number": idNumber,
-            "total_amount": total,
-            "product": productNames,
-            "name": clientName,
-            "phone": email,
-            "address": messages,
-            "status": "pending",
-            "note": ""
+          "id_number": idNumber,
+          "total_amount": total,
+          "product": productNames,
+          "name": clientName,
+          "phone": email,
+          "address": messages,
+          "status": "Đang chờ",
+          "note": "",
+          "date_created": formattedDate,
         }),
       });
       const data = await response.json();
