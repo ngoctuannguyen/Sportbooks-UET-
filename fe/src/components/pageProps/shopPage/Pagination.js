@@ -66,6 +66,7 @@ const Pagination = ({ itemsPerPage, isAdmin, productName, productCategory, minPr
 
   useEffect(() => {
     const product_search = async () => {
+      console.log("product_search", productName, productCategory, minPrice, maxPrice);
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_search`, {
           method: "POST",

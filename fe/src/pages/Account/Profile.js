@@ -268,8 +268,8 @@ function Profile({ isAdmin }) {
                     </Col>
                     <Col span={12} className='form-field-value'>
                       <input
-                        type="email"
-                        id="email"
+                        type="text"
+                        id="name"
                         name="email"
                         value={userInfo.email}
                         onChange={handleInputChange}

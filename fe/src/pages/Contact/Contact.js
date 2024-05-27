@@ -119,6 +119,11 @@ const Contact = ({ isAdmin }) => {
   };
 
   const handleDelete = async (id) => {
+    const isConfirmed = window.confirm("Xóa admin id=" + id + "?");
+    if (!isConfirmed) {
+      return;
+    }
+
     try {
       console.log(id);
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_delete`, {
@@ -129,13 +134,13 @@ const Contact = ({ isAdmin }) => {
         body: JSON.stringify({
           "admin_id": id
         }),
-      }
-      );
+      });
+      window.location.reload();
       if (!res.ok) {
         throw new Error("Delete failed");
       }
       const data = await res.status();
-      console.log(data);
+      console.log(data); 
     } catch (err) {
       console.log(err);
     }
