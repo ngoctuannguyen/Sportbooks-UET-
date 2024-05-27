@@ -68,7 +68,7 @@ const Payment = () => {
     if (!e.target.value) {
       setErrEmail("Phone number is required");
     } else if (!emailRegex.test(e.target.value)) {
-      setErrEmail("Invalid pjone number format");
+      setErrEmail("Invalid phone number format");
     } else {
       setErrEmail("");
     }

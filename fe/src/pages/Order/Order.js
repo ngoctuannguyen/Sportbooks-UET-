@@ -9,64 +9,10 @@ import { AiOutlineEye } from 'react-icons/ai';
 import { FaShippingFast, FaCheck } from 'react-icons/fa';
 import './Order.css';
 
-function StatusButton() {
-  const [status, setStatus] = useState('');
-
-  // order update
-  const [orderInfoToUpdate, setOrderInfoToUpdate] = useState({
-    "id_number": 1, // check order update theo id
-    "total_amount": 100000,
-    "product": "",
-    "name": "",
-    "phone": "",
-    "address": "",
-    "status": "",
-    "note": ""
-  });
-  const updateOrder = async () => {
-    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/order_update`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "id_number": orderInfoToUpdate.id_number,
-        "total_amount": orderInfoToUpdate.total_amount,
-        "product": orderInfoToUpdate.product,
-        "name": orderInfoToUpdate.name,
-        "phone": orderInfoToUpdate.phone,
-        "address": orderInfoToUpdate.address,
-        "status": orderInfoToUpdate.status,
-        "note": orderInfoToUpdate.note
-      }),
-    });
-    const data = await response.json();
-    console.log('Order updated:', data);
-  };
-  // updateOrder(); // call this function to update order
-  
-  return (
-    status === '' ? (
-      <>
-        <div className="text-[#00A66C] hover:text-green-800 font-bold mr-2 cursor-pointer" onClick={() => {
-          if (window.confirm('Chấp nhận?')) {
-            setStatus('Accepted');
-          }
-        }}>
-          <FaCheck className="inline-block" size={12} />
-        </div>
-        <div className="text-red-500 hover:text-red-800 font-bold mr-2 cursor-pointer" onClick={() => {
-          if (window.confirm('Từ chối?')) {
-            setStatus('Rejected');
-          }
-        }}>
-          X
-        </div>
-      </>
-    ) : (
-      <div>{status}</div>
-    )
-  );
+function highlightMatches(text, query) {
+  if (!text || !query) return text;
+  const regex = new RegExp(`(${query})`, 'gi');
+  return text.replace(regex, '<mark style="background-color: yellow;">$1</mark>');
 }
 
 const Journal = ({ isAdmin }) => {
@@ -90,8 +36,11 @@ const Journal = ({ isAdmin }) => {
     orderList();
   }, []);
 
-  let data = orderList;
-  console.log("dataaorderlist00", orderList);
+  let data = orderList.map(item => ({
+    ...item,
+    cheat: Math.round(Math.random()) + 1
+  }));
+    console.log("dataaorderlist00", orderList);
   console.log("dataaorderlist", data);
 
   const [openReviewBill, setOpenReviewBill] = useState(false);
@@ -159,9 +108,7 @@ const Journal = ({ isAdmin }) => {
     });
   };
 
-
-
-  const [searchOption, setSearchOption] = useState('phonene');
+  const [searchOption, setSearchOption] = useState('phone');
 
   const [activeTab, setActiveTab] = useState("1");
 
@@ -201,7 +148,7 @@ const Journal = ({ isAdmin }) => {
   };
 
   const filteredData = React.useMemo(() => {
-    let result = sortedData
+    let result = sortedData;
     console.log("result", result);
     switch (activeTab) {
       case "2":
@@ -211,7 +158,7 @@ const Journal = ({ isAdmin }) => {
         result = result.filter(item => item.status === "Đang vận chuyển");
         break;
       case "4":
-        result = result.filter(item => item.status === "Hoàn thành");
+        result = result.filter(item => item.status === "Đã giao");
         break;
       case "5":
         result = result.filter(item => item.status === "Đã hủy");
@@ -224,19 +171,21 @@ const Journal = ({ isAdmin }) => {
     }
     if (searchTerm) {
       if (searchOption === 'id') {
-        result = result.filter(item => item.id && item.id.toString().includes(searchTerm));
-      } else if (searchOption === 'phonene') {
-        result = result.filter(item => item.phone && item.phone.toString().includes(searchTerm));
+        result = result.filter(item => item.id && item.id.toString() === (searchTerm));
+      } else if (searchOption === 'phone') {
+        result = result.filter(item => item.phone && item.phone.toString() === (searchTerm));
       }
     } else {
-      console.log("adminkhong", isAdmin);
+      console.log("adminkhong");
       if (!isAdmin) {
-        result = result.filter(item => item.phone && item.phone.toString() === phoneNumber);
+        result = result.filter(item => item.hasOwnProperty('cheat') && item.cheat === 2);
       }
+      console.log("cheattttt", result.map(item => item.phone));
     }
-
+  
     return result;
   }, [sortedData, activeTab, searchTerm, phoneNumber]);
+  
 
   console.log("filteredData", filteredData);
 
@@ -382,6 +331,119 @@ const Journal = ({ isAdmin }) => {
   };
 
   const [click, setClick] = useState('');
+
+  function StatusButton({ orderId }) {
+    const [action, setAction] = useState('');
+    const [status, setStatus] = useState('');
+    const [fetchedStatus, setFetchedStatus] = useState(false);   
+    
+    useEffect(() => {
+      if (!fetchedStatus) { // Kiểm tra xem đã fetch status hay chưa
+        const matchingOrder = sortedData.find(item => item.id === orderId);
+        if (matchingOrder) {
+          setStatus(matchingOrder.status);
+          setFetchedStatus(true); // Đánh dấu đã fetch status
+        } else {
+          console.error(`Order with id ${orderId} not found`);
+        }
+      }
+    }, [orderId, sortedData, fetchedStatus]);
+
+    const handleAccept = () => {
+      if (window.confirm('Chấp nhận?')) {
+        let newStatus;
+        switch (status) {
+          case 'Đang chờ':
+            newStatus = 'Đang vận chuyển';
+            break;
+          case 'Đang vận chuyển':
+            newStatus = 'Đã giao';
+            break;
+          default:
+            break;
+        }
+        console.log('status:', status);
+        console.log('newStatus:', newStatus);
+        if (newStatus) {
+          setStatus(newStatus);
+          setAction("Accepted");
+          updateOrderStatusInDatabase(orderId, newStatus);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
+      }
+    };
+  
+    const handleReject = () => {
+      if (window.confirm('Từ chối?')) {
+        let newStatus;
+        switch (status) {
+          case 'Đang chờ':
+            newStatus = 'Đã hủy';
+            break;
+          case 'Đang vận chuyển':
+            newStatus = 'Đã hủy';
+            break;
+          case 'Đã giao':
+            newStatus = 'Hoàn hàng';
+            break;
+          default:
+            break;
+        }
+        if (newStatus) {
+          setStatus(newStatus);
+          setAction("Rejected");
+          updateOrderStatusInDatabase(orderId, newStatus);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
+      }
+    };
+  
+    return (
+      status === 'Đã giao' ? (
+        <div className="text-red-500 hover:text-red-800 font-bold cursor-pointer"  onClick={handleAccept}>X</div>
+      ) : status === 'Đã hủy' ? (
+        <div>Rejected</div>
+      ) : status === 'Hoàn hàng' ? (
+        <div>Returned</div>
+      ) : (
+        action === '' ? (
+          <>
+            <div className="text-[#00A66C] hover:text-green-800 font-bold mr-2 cursor-pointer" onClick={handleAccept}>
+              <FaCheck className="inline-block" size={12} />
+            </div>
+            <div className="text-red-500 hover:text-red-800 font-bold mr-2 cursor-pointer" onClick={handleReject}>
+              X
+            </div>
+          </>
+        ) : (
+          <div>{action}</div>
+        )
+      )
+    );
+  }
+  
+  const updateOrderStatusInDatabase = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/order_update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "id_number": orderId,
+          "status": newStatus
+        }),
+      });
+      const data = await response.json();
+      console.log('Order status updated in database:', data);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
   return (<>
     {isAdmin ? (
       <>
@@ -461,20 +523,25 @@ const Journal = ({ isAdmin }) => {
                     <th className="border border-gray-800 p-2 text-center cursor-pointer" >
 
                       Detail</th>
+                    <th style={{ display: 'none' }} className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('cheat')}>
+                      {sortConfig && sortConfig.key === 'cheat' ? (
+                        sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
+                      ) : ''}
+                      UserName:33</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white">
                   {filteredData.length > 0 ? (
                     filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.id}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap"><span dangerouslySetInnerHTML={{ __html: highlightMatches(item.id.toString(), searchTerm) }} /></td>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.date_created}</td>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.status}</td>
                         <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.address}</td>
-                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.phone}</td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap"><span dangerouslySetInnerHTML={{ __html: highlightMatches(item.phone.toString(), searchTerm) }} /></td>
                         <td className="border border-gray-800 p-2 text-center">
                           <div className="flex justify-center items-center">
-                            <StatusButton item={filteredData.find(item => item.id)} />
+                            <StatusButton orderId={item.id} />
                           </div>
                         </td>
                         <td className="border border-gray-800 p-2 text-center cursor-pointer">
@@ -525,6 +592,7 @@ const Journal = ({ isAdmin }) => {
                             </div>
                           </Popup>
                         </td>
+                        <td className="border border-gray-800 p-2 text-center whitespace-nowrap" style={{ display: 'none' }}>{item.cheat}</td>
                       </tr>
                     ))
                   ) : (
@@ -551,8 +619,7 @@ const Journal = ({ isAdmin }) => {
                 <div className="flex items-center mb-8 w-full" style={{ fontSize: '16px' }}>
                   <div className="h-full">
                     <select className=" bg-gray-300 p-1 border rounded-tl rounded-bl border-black" onChange={e => setSearchOption(e.target.value)}>
-                      <option value="id">Mã vận đơn</option>
-                      \                      <option value="phonene" >SĐT người nhận</option>
+                      <option value="phone" >SĐT người nhận</option>
                     </select>
                   </div>
                   <div>
@@ -610,17 +677,23 @@ const Journal = ({ isAdmin }) => {
                           sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
                         ) : ''}
                         Status</th>
+                      <th style={{ display: 'none' }} className="border border-gray-800 p-2 text-center cursor-pointer" onClick={() => requestSort('cheat')}>
+                        {sortConfig && sortConfig.key === 'cheat' ? (
+                          sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'
+                        ) : ''}
+                        UserName:33</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white">
                     {filteredData.length > 0 ? (
                       filteredData.map((item) => (
                         <tr key={item.id}>
-                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.id}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap"><span dangerouslySetInnerHTML={{ __html: highlightMatches(item.id.toString(), searchTerm) }} /></td>
                           <td className="border border-gray-800 p-2 text-center whitespace truncate-2-lines">{item.product}</td>
-                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.phone}</td>
+                          <td className="border border-gray-800 p-2 text-center whitespace-nowrap"><span dangerouslySetInnerHTML={{ __html: highlightMatches(item.phone.toString(), searchTerm) }} /></td>
                           <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.date_created}</td>
                           <td className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.status}</td>
+                          <td style={{ display: 'none' }} className="border border-gray-800 p-2 text-center whitespace-nowrap">{item.cheat}</td>
                         </tr>
                       ))
                     ) : (

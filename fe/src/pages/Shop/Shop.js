@@ -5,7 +5,7 @@ import ProductBanner from "../../components/pageProps/shopPage/ProductBanner";
 import ShopSideNav from "../../components/pageProps/shopPage/ShopSideNav";
 
 const Shop = ({isAdmin}) => {
-  const [itemsPerPage, setItemsPerPage] = useState(48);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
   const itemsPerPageFromBanner = (itemsPerPage) => {
     setItemsPerPage(itemsPerPage);
   };

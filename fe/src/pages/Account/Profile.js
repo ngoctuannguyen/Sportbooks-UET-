@@ -4,49 +4,44 @@ import { MdPayment } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Row, Col } from 'antd';
 import HeaderBottom from '../../components/home/Header/Header';
-
 import './Profile.css';
 import { Header } from 'antd/es/layout/layout';
 import Footer from '../../components/home/Footer/Footer';
 
 function Profile({ isAdmin }) {
   const [userInfo, setUserInfo] = useState({
-    username: 'huongluong2k3',
-    name: 'Lương Thị Thu Hương',
-    email: 'hu*********@gmail.com',
-    phone: '*******62',
-    gender: 'female',
+    username: '',
+    name: '',
+    email: '',
+    phone: '',
+    gender: '',
     birthDate: {
       day: '1',
       month: '1',
       year: '1990',
     },
-    avatar: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg", // placeholder for avatar image
+    avatar: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg",
+    address: ""
   });
 
-  // admin profile
-  const [adminInfo, setAdminInfo] = useState(
-    {
-      username: localStorage.getItem('username'),
-    }
-  );
+  const [adminInfo, setAdminInfo] = useState({
+    username: localStorage.getItem('username') || '',
+  });
+
   useEffect(() => {
     const fetchUserInfo = async () => {
-      console.log(adminInfo);
       try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_detail`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"admin_username": adminInfo.username}),
+          body: JSON.stringify({ admin_username: adminInfo.username }),
         });
-        console.log(response);
-        const data = await response.json();
-        console.log(data);
         if (!response.ok) {
           throw new Error('Failed to fetch user info');
         }
+        const data = await response.json();
         setUserInfo({
           username: data.username,
           name: data.name,
@@ -59,27 +54,52 @@ function Profile({ isAdmin }) {
             year: '1990',
           },
           avatar: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg",
+          address: data.address,
         });
       } catch (error) {
         console.error(error);
       }
     };
     fetchUserInfo();
-  }, []);
+  }, [adminInfo.username]);
 
-  // admin update profile
-  const [adminInfoToUpdate, setAdminInfoToUpdate] = useState(
-    {
-      "username": adminInfo.username,
-      "name": "",
-      "email": "",
-      "address": "",
-      "phone": "",
-      "gender": ""
-    }
-  );
+  // Admin profile
+  const [adminName, setAdminName] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPhone, setAdminPhone] = useState('');
+  const [adminGender, setAdminGender] = useState('');
+  const [adminAddress, setAdminAddress] = useState('');
+
+  useEffect(() => {
+    setAdminName(userInfo.name);
+    setAdminEmail(userInfo.email);
+    setAdminPhone(userInfo.phone);
+    setAdminGender(userInfo.gender);
+    setAdminAddress(userInfo.address);
+  }, [userInfo]);
+
+  const handleAdminNameChange = (e) => {
+    setAdminName(e.target.value);
+  };
+
+  const handleAdminEmailChange = (e) => {
+    setAdminEmail(e.target.value);
+  };
+
+  const handleAdminPhoneChange = (e) => {
+    setAdminPhone(e.target.value);
+  };
+
+  const handleAdminGenderChange = (e) => {
+    setAdminGender(e.target.value);
+  };
+
+  const handleAdminAddressChange = (e) => {
+    setAdminAddress(e.target.value);
+  };
+
+  // Admin update profile
   const changeUserInfo = async () => {
-    console.log(adminInfoToUpdate);
     try {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_update`, {
         method: 'POST',
@@ -87,21 +107,20 @@ function Profile({ isAdmin }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          "username": adminInfoToUpdate.username,
-          "name": adminInfoToUpdate.name,
-          "email": adminInfoToUpdate.email,
-          "address": adminInfoToUpdate.address,
-          "phone": adminInfoToUpdate.phone,
-          "gender": adminInfoToUpdate.gender
-      }),
+          username: adminInfo.username,
+          name: adminName,
+          email: adminEmail,
+          address: adminAddress,
+          phone: adminPhone,
+          gender: adminGender,
+        }),
       });
       if (!response.ok) {
         throw new Error('Failed to update user info');
       }
       const data = await response.json();
       console.log(data);
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
     }
   };
@@ -115,13 +134,31 @@ function Profile({ isAdmin }) {
       [name]: value,
     }));
   };
+
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+
+    // Validate the current password, new password, and confirmation
+    if (currentPassword !== '11111') {
+      alert('Current password is incorrect');
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      alert('New password and confirmation do not match');
+      return;
+    }
+
+    // If everything is valid, update the password
+    updateUserPassword(newPassword);
+  };
+
   // Define state variables for the form inputs
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   // Define a function to update the user's password
-  // This is just a placeholder. You'll need to implement this function based on how your application manages state and interacts with your backend.
   const updateUserPassword = (newPassword) => {
     console.log('Updating password to: ' + newPassword);
     // Here you would typically make a request to your backend to update the user's password
@@ -146,48 +183,12 @@ function Profile({ isAdmin }) {
     updateAddress({ address });
   }
 
-  function handlePasswordChange(event) {
-    event.preventDefault();
-
-    // Validate the current password, new password, and confirmation
-    if (currentPassword !== 11111) {
-      alert('Current password is incorrect');
-      return;
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      alert('New password and confirmation do not match');
-      return;
-    }
-
-    // If everything is valid, update the password
-    updateUserPassword(newPassword);
-  }
-
-  const handleDateChange = (e) => {
-    const { name, value } = e.target;
-    setUserInfo((prevState) => ({
-      ...prevState,
-      birthDate: {
-        ...prevState.birthDate,
-        [name]: value,
-      },
-    }));
-  };
-
-  const handleGenderChange = (e) => {
-    const { value } = e.target;
-    setUserInfo((prevState) => ({
-      ...prevState,
-      gender: value,
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
     console.log(userInfo);
   };
+
 
   return (
     <div>
@@ -259,8 +260,8 @@ function Profile({ isAdmin }) {
                         type="text"
                         id="name"
                         name="name"
-                        value={userInfo.name}
-                        onChange={handleInputChange}
+                        value={adminName}
+                        onChange={handleAdminNameChange}
                       />
                     </Col>
                   </Row>
@@ -273,8 +274,8 @@ function Profile({ isAdmin }) {
                         type="text"
                         id="name"
                         name="email"
-                        value={userInfo.email}
-                        onChange={handleInputChange}
+                        value={adminEmail}
+                        onChange={handleAdminEmailChange}
                       />
                     </Col>
                   </Row>
@@ -287,8 +288,8 @@ function Profile({ isAdmin }) {
                         type="text"
                         id="phone"
                         name="phone"
-                        value={userInfo.phone}
-                        onChange={handleInputChange}
+                        value={adminPhone}
+                        onChange={handleAdminPhoneChange}
                       />
                     </Col>
                   </Row>
@@ -302,8 +303,8 @@ function Profile({ isAdmin }) {
                           type="radio"
                           name="gender"
                           value="male"
-                          checked={userInfo.gender === 'male'}
-                          onChange={handleGenderChange}
+                          checked={adminGender === 'male'}
+                          onChange={handleAdminGenderChange}
                           style={{ marginRight: '5px' }}
                         />
                         Nam
@@ -313,8 +314,8 @@ function Profile({ isAdmin }) {
                           type="radio"
                           name="gender"
                           value="female"
-                          checked={userInfo.gender === 'female'}
-                          onChange={handleGenderChange}
+                          checked={adminGender === 'female'}
+                          onChange={handleAdminGenderChange}
                           style={{ marginRight: '5px' }}
                         />
                         Nữ
@@ -324,8 +325,8 @@ function Profile({ isAdmin }) {
                           type="radio"
                           name="gender"
                           value="other"
-                          checked={userInfo.gender === 'other'}
-                          onChange={handleGenderChange}
+                          checked={adminGender === 'other'}
+                          onChange={handleAdminGenderChange}
                           style={{ marginRight: '5px' }}
                         />
                         Khác
@@ -334,46 +335,16 @@ function Profile({ isAdmin }) {
                   </Row>
                   <Row className='form-field'>
                     <Col span={12} className='form-field-label'>
-                      <label htmlFor='birthday'>Ngày sinh</label>
+                      <label htmlFor='address'>Địa chỉ</label>
                     </Col>
-                    <Col span={4} className='form-field-label'>
-                      <select
-                        id="day"
-                        name="day"
-                        value={userInfo.birthDate.day}
-                        onChange={handleDateChange}
-                        style={{ width: '80%' }}
-                      >
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                          <option key={day} value={day}>{day}</option>
-                        ))}
-                      </select>
-                    </Col>
-                    <Col span={4} className='form-field-label'>
-                      <select
-                        id="month"
-                        name="month"
-                        value={userInfo.birthDate.month}
-                        onChange={handleDateChange}
-                        style={{ width: '80%' }}
-                      >
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                          <option key={month} value={month}>{month}</option>
-                        ))}
-                      </select>
-                    </Col>
-                    <Col span={4} className='form-field-label'>
-                      <select
-                        id="year"
-                        name="year"
-                        value={userInfo.birthDate.year}
-                        onChange={handleDateChange}
-                        style={{ width: '80%' }}
-                      >
-                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-                          <option key={year} value={year}>{year}</option>
-                        ))}
-                      </select>
+                    <Col span={12} className='form-field-value'>  
+                      <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        value={adminAddress}
+                        onChange={handleAdminAddressChange}
+                      />
                     </Col>
                   </Row>
                   <Row className='form-field'>
