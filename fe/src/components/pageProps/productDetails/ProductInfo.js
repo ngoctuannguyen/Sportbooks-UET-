@@ -37,15 +37,6 @@ const ProductInfo = ({ productInfo, onSave, isAdmin, onDelete }) => {
   console.log(editedProductInfo.id);
   const changProductInfo = async () => {
     try {
-      console.log("id",productInfoToChange);
-      console.log(productInfoToChange.id);
-      console.log(productInfoToChange.name);
-      console.log(productInfoToChange.category);
-      console.log(productInfoToChange.price);
-      console.log(productInfoToChange.stars);
-      console.log(productInfoToChange.desc);
-      console.log(productInfoToChange.product_count);
-      console.log(productInfoToChange.url);
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/products/product_update`, {
         method: "POST",
         headers: {

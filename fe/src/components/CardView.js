@@ -9,6 +9,10 @@ function highlightMatches(text, query) {
 const CardView = ({ image, name, id, phone, email, address, membership: initialMembership, username, searchQuery, onDelete }) => {
     const [showPopup, setShowPopup] = useState(false);
     const [selectedMembership, setSelectedMembership] = useState(initialMembership);
+    const [editedName, setEditedName] = useState(name);
+    const [editedPhone, setEditedPhone] = useState(phone);
+    const [editedEmail, setEditedEmail] = useState(email);
+    const [editedAddress, setEditedAddress] = useState(address);
     const popupRef = useRef(null);
 
     const deleteAdmin = async () => {
@@ -34,6 +38,7 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
 
     const handleEditClick = () => {
         setShowPopup(true);
+        console.log('Editing admin:', id);
     };
 
     const handleClosePopup = () => {
@@ -59,22 +64,22 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
     }, []);
 
     const handleSaveClick = async () => {
-        console.log('Saving admin:', id, name, phone, email, address);
+        console.log('Saving admin:', editedName, username, editedEmail, editedAddress, selectedMembership);
         try {
-            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admin_update`, {
-                method: 'POST',
+            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admins/admins_update`, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "admin_id": id,
-                    "admin_name": name,
-                    "admin_phonenumber": phone,
-                    "admin_email": email,
-                    "admin_address": address,
+                    "username": username,
+                    "name": editedName,
+                    "phone": editedPhone,
+                    "email": editedEmail,
+                    "address": editedAddress,
                 }),
-            });
-            window.location.reload();
+            }
+            );
             if (!res.ok) {
                 throw new Error("Update failed");
             }
@@ -111,19 +116,19 @@ const CardView = ({ image, name, id, phone, email, address, membership: initialM
                         </label>
                         <label>
                             Name:
-                            <input type="text" defaultValue={name} />
+                            <input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
                         </label>
                         <label>
                             Phone:
-                            <input type="text" defaultValue={phone} />
+                            <input type="text" value={editedPhone} onChange={(e) => setEditedPhone(e.target.value)} />
                         </label>
                         <label>
                             Email:
-                            <input type="text" defaultValue={email} />
+                            <input type="text" value={editedEmail} onChange={(e) => setEditedEmail(e.target.value)} />
                         </label>
                         <label>
                             Address:
-                            <input type="text" defaultValue={address} />
+                            <input type="text" value={editedAddress} onChange={(e) => setEditedAddress(e.target.value)} />
                         </label>
                         <label>
                             Gender:
